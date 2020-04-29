@@ -151,7 +151,7 @@ pinf0809 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable
   theme(legend.position = "none", legend.title = element_text(size=14), legend.text=element_text(size=14),  axis.text=element_text(size=14),
         axis.title.y=element_text(size=14),axis.title.x = element_blank(), 
         legend.spacing.x = unit(0.3, 'cm'), plot.margin=unit(c(0.7,0.7,0.8,0.8),"cm")) + scale_x_continuous(expand = c(0, 0)) + 
-  scale_color_manual(values=c('blue','red','darkgreen'), labels= c("Remainders", "Shielders", "Vulnerable")) +
+  scale_color_manual(values=c('blue','darkgreen','red'), labels= c("Remainders", "Shielders", "Vulnerable")) +
   geom_rect(data=phase2, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.5, inherit.aes = FALSE) +
   geom_rect(data=phase3, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.35, inherit.aes = FALSE) +
   geom_rect(data=phase4, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.5, inherit.aes = FALSE) +
@@ -272,7 +272,7 @@ pinf0607 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable
   theme(legend.position = "none", legend.title = element_text(size=14), legend.text=element_text(size=14),  axis.text=element_text(size=14),
         axis.title.y=element_text(size=14),axis.title.x = element_blank(), 
         legend.spacing.x = unit(0.3, 'cm'), plot.margin=unit(c(0.7,0.7,0.8,0.8),"cm")) + scale_x_continuous(expand = c(0, 0)) + 
-  scale_color_manual(values=c('blue','red','darkgreen'), labels= c("Remainders", "Shielders", "Vulnerable")) +
+  scale_color_manual(values=c('blue','darkgreen','red'), labels= c("Remainders", "Shielders", "Vulnerable")) +
   geom_rect(data=phase2, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.5, inherit.aes = FALSE) +
   geom_rect(data=phase3, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.35, inherit.aes = FALSE) +
   geom_rect(data=phase4, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.5, inherit.aes = FALSE) +
@@ -394,7 +394,7 @@ pinf1011 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable
   theme(legend.position = "bottom", legend.title = element_text(size=14), legend.text=element_text(size=14),  axis.text=element_text(size=14),
         axis.title.y=element_text(size=14),axis.title.x = element_text(size=14), 
         legend.spacing.x = unit(0.3, 'cm'), plot.margin=unit(c(0.7,0.7,0.8,0.8),"cm")) + scale_x_continuous(expand = c(0, 0)) + 
-  scale_color_manual(values=c('blue','red','darkgreen'), labels= c("Remainders", "Shielders", "Vulnerable")) +
+  scale_color_manual(values=c('blue','darkgreen','red'), labels= c("Remainders", "Shielders", "Vulnerable")) +
   geom_rect(data=phase2, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.5, inherit.aes = FALSE) +
   geom_rect(data=phase3, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.35, inherit.aes = FALSE) +
   geom_rect(data=phase4, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.5, inherit.aes = FALSE) +

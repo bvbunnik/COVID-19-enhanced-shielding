@@ -170,7 +170,7 @@ pinf <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))  
   theme(legend.position = "bottom", legend.title = element_blank(), legend.text=element_text(size=14),  axis.text=element_text(size=14),
         axis.title.y=element_text(size=14),axis.title.x = element_text(size=14), 
         legend.spacing.x = unit(0.3, 'cm'), plot.margin=unit(c(0.7,0.7,0.8,0.8),"cm")) + scale_x_continuous(expand = c(0, 0)) + 
-  scale_color_manual(values=c('blue','red','darkgreen'), labels= c("Remainders", "Shielders", "Vulnerable")) +
+  scale_color_manual(values=c('blue','darkgreen','red'), labels= c("Remainders", "Shielders", "Vulnerable")) +
   geom_rect(data=phase2, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.5, inherit.aes = FALSE) +
   geom_rect(data=phase3, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.35, inherit.aes = FALSE) +
   geom_rect(data=phase4, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.5, inherit.aes = FALSE) +
@@ -197,11 +197,11 @@ pbeta <- ggplot(data = statsbeta1, aes(x = (Time), y = value, lty = variable)) +
 
 
 pr0 <- ggplot(data = statsr0, aes(x = (Times), y = value, col = variable)) + theme_bw() + 
-  labs(x ="Time (Days)", y = "R0", lty = " ") + scale_y_continuous(limits = c(0,3),  expand = c(0,0)) +
+  labs(x ="Time (Days)", y = expression("R"[e]), lty = " ") + scale_y_continuous(limits = c(0,3),  expand = c(0,0)) +
   theme(legend.position = "bottom", legend.title = element_blank(), legend.text=element_text(size=14),  axis.text=element_text(size=14),
         axis.title.y=element_text(size=14),axis.title.x= element_text(size=14), 
         legend.spacing.x = unit(0.3, 'cm'), plot.margin=unit(c(0.7,0.7,0.8,0.8),"cm")) + scale_x_continuous(expand = c(0, 0)) + 
-  scale_color_manual(values=c('blue', 'red', 'darkgreen', "black"), labels= c("Remainders","Shielders","Vulnerable", "Overall")) +
+  scale_color_manual(values=c('blue', 'darkgreen', 'red', "black"), labels= c("Remainders","Shielders","Vulnerable", "Overall")) +
   geom_rect(data=phase2, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.5, inherit.aes = FALSE) +
   geom_rect(data=phase3, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.35, inherit.aes = FALSE) +
   geom_rect(data=phase4, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.5, inherit.aes = FALSE) +
@@ -223,7 +223,7 @@ ggplot(data = statsrecov, aes(x = (Time), y = value, col = variable))  + theme_b
   theme(legend.position = "bottom", legend.title = element_blank(), legend.text=element_text(size=14),  axis.text=element_text(size=14),
         axis.title.y=element_text(size=14),axis.title.x = element_text(size=14), 
         legend.spacing.x = unit(0.3, 'cm'), plot.margin=unit(c(0.7,0.7,0.8,0.8),"cm")) + scale_x_continuous(expand = c(0, 0)) + 
-  scale_color_manual(values=c('blue','red','darkgreen'), labels= c("Remainders", "Shielders", "Vulnerable")) +
+  scale_color_manual(values=c('blue','darkgreen','red'), labels= c("Remainders", "Shielders", "Vulnerable")) +
   geom_rect(data=phase2, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.5, inherit.aes = FALSE) +
   geom_rect(data=phase3, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.35, inherit.aes = FALSE) +
   geom_rect(data=phase4, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.5, inherit.aes = FALSE) +
