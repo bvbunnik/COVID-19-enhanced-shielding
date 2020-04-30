@@ -17,7 +17,7 @@ R code can be found in the `Enhanced Shielding` folder and is organised accordin
 * Figure 5 - Sensitivity analysis of the zeta parameter and Phase 1 R_e
 * Figure S2 & 3 - Differing population structure
 
-# C++
+### C++
 
 ## Programs and Packages Used
 COVID-19 modelling code was implemented using R and C++ (3.6.2). ODEs were solved using the "desolve" (1.27.1) package in R. 
