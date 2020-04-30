@@ -3,6 +3,7 @@ library("deSolve"); library("ggplot2"); library("ggpubr"); library("reshape2"); 
 library("Cairo")
 
 #### Model Functions ####
+
 #Function for the generation time/(1/gamma) parameter
 GenTime <- function(T2, R0) {
   G = T2 * ((R0-1)/log(2))
