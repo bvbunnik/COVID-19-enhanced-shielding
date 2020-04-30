@@ -68,7 +68,6 @@ beta4 <- function(time,tstart1,tdur,scaling) {
 
 plot(beta4(seq(0,730), 71, (6*7), 0.5))
 
-
 #Function for Shielded/non-Shielded Pop
 SIRS <- function(time, state, parameters) {
   with(as.list(c(state, parameters)), {
@@ -151,11 +150,61 @@ phase4 <- data.frame(xmin=71+(6*7)+(12*7), xmax=Inf, ymin=-Inf, ymax=Inf, name =
 
 #### R0 Plot - Imported From Bram's Results ####
 
+PhaseR0 <- function(Comp, Phase) {
+  ifelse((Comp == "V"), 
+    
+  )
+}
+
+fv = 0.2; fs = 0.2; fr1 = 0.2; fr2 = 0.2; fr3 = 0.2 
+gamma = (1/(GenTime(3.3,2.8)))
+
+R0_VUln <- (beta1(72,71,(6*7),0.5)*fv + 
+                beta1(72,71,(6*7),0.5)*fs + 
+                beta4(72,71,(6*7),0.5)*fr1 + 
+                beta4(72,71,(6*7),0.5)*fr2 + 
+                beta4(72,71,(6*7),0.5)*fr3) / gamma1
+R0_Shield <- (beta1(400,71,(6*7),0.5)*fv + 
+                beta1(400,71,(6*7),0.5)*fs + 
+                beta2(400,71,(6*7),0.5)*fr1 + 
+                beta2(400,71,(6*7),0.5)*fr2 + 
+                beta2(400,71,(6*7),0.5)*fr3) / gamma1
+R0_Rem1 <- (beta1(400,71,(6*7),0.5)*fv + 
+                beta1(400,71,(6*7),0.5)*fs + 
+                beta2(400,71,(6*7),0.5)*fr1 + 
+                beta2(400,71,(6*7),0.5)*fr2 + 
+                beta2(400,71,(6*7),0.5)*fr3) / gamma1
+R0_Rem1 <- (beta1(400,71,(6*7),0.5)*fv + 
+              beta1(400,71,(6*7),0.5)*fs + 
+              beta2(400,71,(6*7),0.5)*fr1 + 
+              beta2(400,71,(6*7),0.5)*fr2 + 
+              beta2(400,71,(6*7),0.5)*fr3) / gamma1
+R0_Rem1 <- (beta1(400,71,(6*7),0.5)*fv + 
+              beta1(400,71,(6*7),0.5)*fs + 
+              beta2(400,71,(6*7),0.5)*fr1 + 
+              beta2(400,71,(6*7),0.5)*fr2 + 
+              beta2(400,71,(6*7),0.5)*fr3) / gamma1
+
+
 r0data <- data.frame("Phase" = c("Phase 0","Phase 1", "Phase 3"),
-                     "OverallR0" = c(1.7, 0.86, 1.63),
-                     "VulR0" = c(1.6999, 0.8, 0.4),
-                     "ShiR0" = c(1.6999, 0.8599, 1.27),
-                     "RemR0" = c(1.6999, 0.9, 2.25))
+                     "OverallR0" = c(1.7, 
+                                     0.86, 
+                                     1.63),
+                     "VulR0" = c((beta1(1,71,(6*7),0.5)*fv + beta1(1,71,(6*7),0.5)*fs + beta4(1,71,(6*7),0.5)*fr1 + beta4(1,71,(6*7),0.5)*fr2 + 
+                                    beta4(1,71,(6*7),0.5)*fr3) / gamma1, 
+                                 (beta1(72,71,(6*7),0.5)*fv + beta1(72,71,(6*7),0.5)*fs + beta4(72,71,(6*7),0.5)*fr1 + beta4(72,71,(6*7),0.5)*fr2 + 
+                                    beta4(72,71,(6*7),0.5)*fr3) / gamma1, 
+                                 (beta1(400,71,(6*7),0.5)*fv + beta1(400,71,(6*7),0.5)*fs + beta4(400,71,(6*7),0.5)*fr1 + beta4(400,71,(6*7),0.5)*fr2 + 
+                                    beta4(400,71,(6*7),0.5)*fr3) / gamma1),
+                     "ShiR0" = c((beta1(1,71,(6*7),0.5)*fv + beta1(1,71,(6*7),0.5)*fs + beta2(1,71,(6*7),0.5)*fr1 + beta2(1,71,(6*7),0.5)*fr2 + 
+                                    beta2(1,71,(6*7),0.5)*fr3) / gamma1, 
+                                 (beta1(71,71,(6*7),0.5)*fv + beta1(71,71,(6*7),0.5)*fs + beta2(71,71,(6*7),0.5)*fr1 + beta2(71,71,(6*7),0.5)*fr2 + 
+                                    beta2(71,71,(6*7),0.5)*fr3) / gamma1, 
+                                 (beta1(400,71,(6*7),0.5)*fv + beta1(400,71,(6*7),0.5)*fs + beta2(400,71,(6*7),0.5)*fr1 + beta2(400,71,(6*7),0.5)*fr2 + 
+                                    beta2(400,71,(6*7),0.5)*fr3) / gamma1),
+                     "RemR0" = c(1.6999, 
+                                 0.9, 
+                                 2.25))
 
 r0data <- rbind.data.frame(data.frame("Phase" = c("Phase 0"), "Times" = seq(0,70),                                  "OverallR0" = c(1.7), "VulR0" = c(1.6999), "ShiR0" = c(1.6999), "RemR0" = c(1.6999)),
                            data.frame("Phase" = c("Phase 1"), "Times" = seq(71,71+(6*7)-1),                         "OverallR0" = c(0.86), "VulR0" = c(0.8), "ShiR0" = c(0.8599), "RemR0" = c(0.8799)),
@@ -165,7 +214,7 @@ r0data <- rbind.data.frame(data.frame("Phase" = c("Phase 0"), "Times" = seq(0,70
 statsr0 <- melt(r0data, id.vars =  c("Times"), measure.vars = c("OverallR0", "VulR0", "ShiR0", "RemR0"))
 statsr0$variable <- factor(statsr0$variable, levels=rev(levels(statsr0$variable)))
 
-#### Aggregated Plots ####
+#### Aggregated Plots - Infecteds, Beta and R_e ####
 pinf <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))  + theme_bw() +
   labs(x ="Time (Days)", y = "Proportion Infected", color = "Population") + scale_y_continuous(limits = c(0,0.07), expand = c(0,0)) +
   theme(legend.position = "bottom", legend.title = element_blank(), legend.text=element_text(size=14),  axis.text=element_text(size=14),
@@ -212,7 +261,6 @@ pr0 <- ggplot(data = statsr0, aes(x = (Times), y = value, col = variable)) + the
   geom_text(data = phase4, aes(x = xmin, y = 2.3, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 125) +
   geom_line(size = 1.02, stat = "identity")
 
-
 plot <- ggarrange(pinf, NULL, pbeta,NULL,pr0, nrow = 5, ncol =1, align = "v", heights = c(0.9, -0.03, 0.5,-0.05, 0.5), labels = c("A","", "B","","C"), font.label = c(size = 20) )
 
 #Anti-Aliasing in Plots - Can Ignore 
@@ -220,26 +268,7 @@ setwd("C:/Users/amorg/Documents/PhD/nCoV Work/Figures/Enhanced Shielding/New")
 ggsave(plot, filename = "Fig2.png", dpi = 300, type = "cairo",
        width = 8.5, height = 11, units = "in")
 
-#Analysing the Removed Fraction
-statsrecov <- melt(out1, id.vars = c("Time"), measure.vars = c("Recovv", "Recovs", "RemRecov"))
-statsrecov$variable <- factor(statsrecov$variable, levels=rev(levels(statsrecov$variable)))
-
-ggplot(data = statsrecov, aes(x = (Time), y = value, col = variable))  + theme_bw() +
-  labs(x ="Time (Days)", y = "Proportion Recovered", color = "Population") + scale_y_continuous(limits = c(0,0.7), expand = c(0,0)) +
-  theme(legend.position = "bottom", legend.title = element_blank(), legend.text=element_text(size=14),  axis.text=element_text(size=14),
-        axis.title.y=element_text(size=14),axis.title.x = element_text(size=14), 
-        legend.spacing.x = unit(0.3, 'cm'), plot.margin=unit(c(0.7,0.7,0.8,0.8),"cm")) + scale_x_continuous(expand = c(0, 0)) + 
-  scale_color_manual(values=c('blue','darkgreen','red'), labels= c("Remainders", "Shielders", "Vulnerable")) +
-  geom_rect(data=phase2, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.5, inherit.aes = FALSE) +
-  geom_rect(data=phase3, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.35, inherit.aes = FALSE) +
-  geom_rect(data=phase4, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.5, inherit.aes = FALSE) +
-  geom_text(data = phase1, aes(x = xmin, y = 0.64, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 25) +
-  geom_text(data = phase2, aes(x = xmin, y = 0.64, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 8) +
-  geom_text(data = phase3, aes(x = xmin, y = 0.64, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 30) +
-  geom_text(data = phase4, aes(x = xmin, y = 0.64, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 125) +
-  geom_line(size = 1.02, stat = "identity")
-
-#### Cumulative Cases ####
+#### Cumulative Cases Calculations ####
 
 SIRS <- function(time, state, parameters) {
   with(as.list(c(state, parameters)), {
@@ -272,19 +301,15 @@ SIRS <- function(time, state, parameters) {
       beta4*Iv*Sr2 + beta2*Is*Sr2 + beta3*Ir1*Sr2 + beta3*Ir2*Sr2 + beta3*Ir3*Sr2 +
       beta4*Iv*Sr3 + beta2*Is*Sr3 + beta3*Ir1*Sr3 + beta3*Ir2*Sr3 + beta3*Ir3*Sr3
     
-    
-    
-    
     return(list(c(dSv, dSs, dSr1, dSr2, dSr3,
                   dIv, dIs, dIr1, dIr2, dIr3,
                   dRv, dRs, dRr1, dRr2, dRr3, dCv, dE)))
   })
 }
 
-#### Testing the Model Structure + Obtaining Specific Information from Model Runs ####
+# Testing the Model Structure + Obtaining Specific Information from Model Runs 
 
 #Initial Conditions and Times
-
 init <- c(Sv = 0.2 - 0.0001*0.2, Ss = 0.2 - 0.0001*0.2, 
           Sr1 = 0.2 - 0.0001*0.2, Sr2 = 0.2 - 0.0001*0.2, Sr3 = 0.2 - 0.0001*0.2,
           Iv = 0.0001*0.2, Is = 0.0001*0.2, Ir1 = 0.0001*0.2, Ir2 = 0.0001*0.2, Ir3 = 0.0001*0.2,   
@@ -302,5 +327,4 @@ out1$Cv <-  out1$Cv/0.2
 out1$E <- out1$E/0.8
 
 out1$Cv[out1$time == 71+(365)]-out1$Cv[out1$time == 71]
-
 out1$E[out1$time == 71+(365)]-out1$E[out1$time == 71]
