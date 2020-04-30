@@ -10,7 +10,7 @@ R code should run without further modification of the code (after installing pre
 
 ## Navigating the Repository 
 ### R
-R code can be found in the `Enhanced Shielding` folder and is organised according to the code used to plot figures found in the manuscript. Current code is available for:
+R code can be found in the `Enhanced Shielding` folder and is organised according to the code used to plot figures found in the manuscript. **WORK IN PROGRESS** Current code is available for:
 * Figure 2 - Baseline Analysis using "Central" Parameters
 * Figure 3 - Sensitivity analysis for the ramp-up and ramp-down period for lockdown release
 * Figure 4 - Sensitivity analysis of the lockdown trigger day and the Phase 2 R_e
