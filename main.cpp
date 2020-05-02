@@ -164,10 +164,6 @@ struct push_back_state_and_time
     {
         state_type x1 = x;
         x1.insert(x1.begin(),t);
-        //0 1  2  3   4   5   6  7  8   9   10  11 12 13  14  15  16    17    18     19     20     21    22    23    24  25  26
-        //t,Sv,Sh,Sr1,Sr2,Sr3,Iv,Ih,Ir1,Ir2,Ir3,Rv,Rh,Rr1,Rr2,Rr3,cumIv,cumIh,cumIr1,cumIr2,cumIr3,sumSr,sumIr,sumRr,pIv,pIh,pIr
-        //x1.insert(x1.end(),{x1[3]+x1[4]+x1[5],  x1[8]+x1[9]+x1[10], x1[13]+x1[14]+x1[15], x1[6]/m_fj[0], x1[7]/m_fj[1]});
-        //x1.insert(x1.end(), x1[22]/m_fj[2]);
         m_states.push_back( x1 );
         m_times.push_back( t );
     }
@@ -252,39 +248,6 @@ int main(int /* argc */ , char** /* argv */ )
     double beta3_ph3 = 2.25*gamma;
     double beta4_ph3 = 0.4*gamma;
 
-
-
-//    data_type beta_ph0_1 = {
-//        {beta1_ph0, beta1_ph0, beta4_ph0,beta4_ph0,beta4_ph0},
-//        {beta1_ph0, beta1_ph0/2.0, beta2_ph0,beta2_ph0,beta2_ph0},
-//        {beta4_ph0, beta2_ph0, beta3_ph0,beta3_ph0,beta3_ph0},
-//        {beta4_ph0, beta2_ph0, beta3_ph0,beta3_ph0,beta3_ph0},
-//        {beta4_ph0, beta2_ph0, beta3_ph0,beta3_ph0,beta3_ph0}
-//    };
-
-//    data_type beta_ph1_1 = {
-//        {beta1_ph1, beta1_ph1, beta4_ph1,beta4_ph1,beta4_ph1},
-//        {beta1_ph1, beta1_ph1/2.0, beta2_ph1,beta2_ph1,beta2_ph1},
-//        {beta4_ph1, beta2_ph1, beta3_ph1,beta3_ph1,beta3_ph1},
-//        {beta4_ph1, beta2_ph1, beta3_ph1,beta3_ph1,beta3_ph1},
-//        {beta4_ph1, beta2_ph1, beta3_ph1,beta3_ph1,beta3_ph1}
-//    };
-
-//    data_type beta_ph2_1 = {
-//        {beta1_ph2, beta1_ph2, beta4_ph2,beta4_ph2,beta4_ph2},
-//        {beta1_ph2, beta1_ph2/2.0, beta2_ph2,beta2_ph2,beta2_ph2},
-//        {beta4_ph2, beta2_ph2, beta3_ph2,beta3_ph2,beta3_ph2},
-//        {beta4_ph2, beta2_ph2, beta3_ph2,beta3_ph2,beta3_ph2},
-//        {beta4_ph2, beta2_ph2, beta3_ph2,beta3_ph2,beta3_ph2}
-//    };
-
-//    data_type beta_ph3_1 = {
-//        {beta1_ph3, beta1_ph3, beta4_ph3,beta4_ph3,beta4_ph3},
-//        {beta1_ph3, beta1_ph3/2.0, beta2_ph3,beta2_ph3,beta2_ph3},
-//        {beta4_ph3, beta2_ph3, beta3_ph3,beta3_ph3,beta3_ph3},
-//        {beta4_ph3, beta2_ph3, beta3_ph3,beta3_ph3,beta3_ph3},
-//        {beta4_ph3, beta2_ph3, beta3_ph3,beta3_ph3,beta3_ph3}
-//    };
     int n_comp=10;
     //2-2-96 -> 1v-1v-48r
     //8-8-84 -> 4v-4h-42r
@@ -296,7 +259,7 @@ int main(int /* argc */ , char** /* argv */ )
     int tot_comps = n_comp;
     int v_comps = 2;
     int h_comps = 1;
-    int r_comps = n_comp - v_comps - h_comps; //change to reflect pop structure.
+    int r_comps = n_comp - v_comps - h_comps;
     double fv_per_comp = fj[0]/v_comps;
     double fh_per_comp = fj[1]/h_comps;
     double fr_per_comp = fj[2]/r_comps;
@@ -371,13 +334,13 @@ int main(int /* argc */ , char** /* argv */ )
 
     state_type y(4*n_comp);
     if(simulation){
-        for(int i=0;i<v_comps;++i){ //change this to reflect pop. structure
+        for(int i=0;i<v_comps;++i){
             y[i]= fv_per_comp - (fv_per_comp*i0);
             y[i+n_comp] = fv_per_comp*i0;
             y[i+2*n_comp] = 0;
             y[i+3*n_comp] = 0;
         }
-        for(int i=v_comps;i<v_comps+h_comps;++i){ //change this to reflect pop. structure
+        for(int i=v_comps;i<v_comps+h_comps;++i){
             y[i]= fh_per_comp - (fh_per_comp*i0);
             y[i+n_comp] = fh_per_comp*i0;
             y[i+2*n_comp] = 0;
@@ -411,7 +374,7 @@ int main(int /* argc */ , char** /* argv */ )
 
     if(fast_analysis){
         data_type fast_results;
-        string file("c:/temp/output/FAST_paras_9betas_all_phases.csv");
+        string file("c:/temp/output/FAST_paras.csv");
         vector<vector<double> > paras = parse2DCsvFile(file);
         for (size_t i=0; i<paras.size();++i){
             for(int i=0;i<tot_comps-r_comps;++i){
@@ -455,8 +418,6 @@ int main(int /* argc */ , char** /* argv */ )
             vector<state_type> y_vec;
             integrate_n_steps(stepper,vuln, y, 0.0 , 1.0, simtime, push_back_state_and_time(y_vec, times,fj,tot_comps));
             std::vector<double> temp;
-            //0 1  2  3   4   5   6  7  8   9   10  11 12 13  14  15  16    17    18     19     20     21    22    23    24  25  26
-            //t,Sv,Sh,Sr1,Sr2,Sr3,Iv,Ih,Ir1,Ir2,Ir3,Rv,Rh,Rr1,Rr2,Rr3,cumIv,cumIh,cumIr1,cumIr2,cumIr3,sumSr,sumIr,sumRr,pIv,pIh,pIr
             for (size_t i=0; i<y_vec.size();++i){
                 temp.push_back(y_vec[i][24]);
             }
@@ -526,13 +487,13 @@ int main(int /* argc */ , char** /* argv */ )
                             }
                         }
                         //Initialise starting values
-                        for(int i=0;i<v_comps;++i){ //change this to reflect pop. structure
+                        for(int i=0;i<v_comps;++i){
                             y[i]= fv_per_comp - (fv_per_comp*i0);
                             y[i+n_comp] = fv_per_comp*i0;
                             y[i+2*n_comp] = 0;
                             y[i+3*n_comp] = 0;
                         }
-                        for(int i=v_comps;i<v_comps+h_comps;++i){ //change this to reflect pop. structure
+                        for(int i=v_comps;i<v_comps+h_comps;++i){
                             y[i]= fh_per_comp - (fh_per_comp*i0);
                             y[i+n_comp] = fh_per_comp*i0;
                             y[i+2*n_comp] = 0;
@@ -562,10 +523,6 @@ int main(int /* argc */ , char** /* argv */ )
                             tempIh.push_back(y_vec[i][end-2]);
                             tempIr.push_back(y_vec[i][end-1]);
                         }
-//                        auto maxIv = *max_element(std::begin(tempIv)+sd1, std::begin(tempIv)+(sd1+365));
-//                        auto maxIh = *max_element(std::begin(tempIh)+sd1, std::begin(tempIh)+(sd1+365));
-//                        auto maxIr = *max_element(std::begin(tempIr)+sd1, std::begin(tempIr)+(sd1+365));
-                        //No increase at all in Iv,Is,Ir means difference in Ix[t+1] - Ix[t] must be 0 or negative from day 72 onwards.
                         double  incrIv = 0,incrIh = 0, incrIr =0;
                         int sd_2nd_peak_Iv = static_cast<int>(sd1)+300,sd_2nd_peak_Ih = static_cast<int>(sd1)+300,sd_2nd_peak_Ir = static_cast<int>(sd1)+300;
                         for (size_t i=72; i<sd1+365;++i){
@@ -593,7 +550,6 @@ int main(int /* argc */ , char** /* argv */ )
                         auto maxIh = *max_element(std::begin(tempIh)+sd_2nd_peak_Ih, std::begin(tempIh)+(sd1+365));
                         auto maxIr = *max_element(std::begin(tempIr)+sd_2nd_peak_Ir, std::begin(tempIr)+(sd1+365));
 
-                        //output consists of: beta3,beta4,beta1,beta2,cumIv,1stpeakIv, 2ndpeakIv,1stpeakIh, 2ndpeakIh,1stpeakIr,2ndpeakIr,no_incrIv,no_incrIh,no_incrIr
                         vector<double> temp = {beta1, beta2, beta3, beta4,y_vec[71+365][end-4]/fj[0], tempIv[71], maxIv,tempIh[71], maxIh,tempIr[71], maxIr, incrIv,incrIh,incrIr};
                         optim_results.push_back(temp);
                         //cout << ".";
@@ -608,7 +564,7 @@ int main(int /* argc */ , char** /* argv */ )
 
 
 void write_simulation(const data_type &y_vec, const data_type &betas, int v_comps, int h_comps, int r_comps){
-    string filename = "c:/temp/output/SIRS_MComp_20-10-70.csv";
+    string filename = "SIRS_MComp_simulation.csv";
     ofstream output(filename);
     output << "t,";
     for (int i=0; i < v_comps;++i){
@@ -656,7 +612,7 @@ void write_simulation(const data_type &y_vec, const data_type &betas, int v_comp
 }
 
 void write_phase_matrices(const data_type &beta_ph0,const data_type &beta_ph1,const data_type &beta_ph2,const data_type &beta_ph3){
-    string filename = "c:/temp/output/SIRS_MComp_20-10-70_betas.csv";
+    string filename = "SIRS_MComp_simulation_betas.csv";
     ofstream output(filename);
     output << "v,h,r\n";
     output << beta_ph0 << "\n";
@@ -668,7 +624,7 @@ void write_phase_matrices(const data_type &beta_ph0,const data_type &beta_ph1,co
 
 
 void write_fast_results(const data_type &fast_results){
-    string filename = "c:/temp/output/SIRS_mult_Comp_FAST_results_9betas_all_phases.csv";
+    string filename = "SIRS_mult_Comp_FAST_results.csv";
     ofstream output(filename);
     output << "peak_Iv, cum_Iv, higher\n";
     output << fast_results;
@@ -676,7 +632,7 @@ void write_fast_results(const data_type &fast_results){
 }
 
 void write_optimisations(data_type optim_results){
-    string filename = "c:/temp/output/SIRS_mult_Comp_optim_results_14-14-72.csv";
+    string filename = "SIRS_mult_Comp_optim_results.csv";
     ofstream output(filename);
     output << "beta1,beta2,beta3,beta4,cumIv_1y,first_peakIv,sec_peakIv,first_peakIh,sec_peakIh,first_peakIr,sec_peakIr,incrIv,incrIh,incrIr\n";
     output << optim_results;
