@@ -1,6 +1,6 @@
+setwd("C:/Users/amorg/Documents/PhD/nCoV Work/Figures/Enhanced Shielding/New") # This is where the plots Output
 rm(list=ls())
-library("deSolve"); library("ggplot2"); library("ggpubr"); library("reshape2"); library("dplyr"); library("RColorBrewer"); library("sensitivity");library("fast")
-library("Cairo")
+library("deSolve"); library("ggplot2"); library("ggpubr"); library("reshape2"); library("dplyr"); library("Cairo")
 
 #### Model Functions ####
 #Function for the generation time/(1/gamma) parameter
@@ -134,30 +134,35 @@ phase2 <- data.frame(xmin=71, xmax=71+(6*7), ymin=-Inf, ymax=Inf, name = "P2")
 phase3 <- data.frame(xmin=71+(6*7), xmax=71+(6*7)+(12*7), ymin=-Inf, ymax=Inf, name = "P3")
 phase4 <- data.frame(xmin=71+(6*7)+(12*7), xmax=Inf, ymin=-Inf, ymax=Inf, name = "P4")
 
-#### Baseline - Shielders Testing - 100% of Baseline ####
-#Initial Conditions and Times
+#### Running the Model - The Efficacy of Shielder Testing ####
 
-parms = c(gamma = 1/(GenTime(3.3,2.8)), 
-          zeta = 1/365,
-          tstart1 = 71, 
-          tdur = (6*7),
-          test = 0) #CAN VARY THIS - DEPENDING ON FACTOR EXPLORED
+testingeff <- seq(0, 1, by = 0.25)
+testingeffdata <- data.frame(matrix(nrow = 0, ncol = 15))
 
-out1 <- data.frame(ode(y = init, func = SIRS, times = times, parms = parms))
+for(i in 1:length(testingeff)) {
+  parms = c(gamma = 1/(GenTime(3.3,2.8)), 
+            zeta = 1/365,
+            tstart1 = 71, 
+            tdur = 6*7,
+            test = testingeff[i]) 
+  out1 <- data.frame(ode(y = init, func = SIRS, times = times, parms = parms))
+  out1$RemS <- out1$Sr1 + out1$Sr2 + out1$Sr3
+  out1$RemI <- out1$Ir1 + out1$Ir2 + out1$Ir3
+  out1$RemR <- out1$Rr1 + out1$Rr2 + out1$Rr3
+  out1 <- out1[, -grep("Sr|Ir|Rr", names(out1))]
+  out1[,2:7] <- out1[,2:7]/0.2
+  out1[,8:10] <- out1[,8:10]/0.6
+  out1$testingeff <- testingeff[i]
+  testingeffdata <- rbind(out1, testingeffdata)
+}
 
-out1$RemS <- out1$Sr1 + out1$Sr2 + out1$Sr3
-out1$RemI <- out1$Ir1 + out1$Ir2 + out1$Ir3
-out1$RemR <- out1$Rr1 + out1$Rr2 + out1$Rr3
-out1$Sv <- out1$Sv/0.20; out1$Ss <- out1$Ss/0.20; out1$RemS <- out1$RemS/0.60
-out1$Iv <- out1$Iv/0.20; out1$Is <- out1$Is/0.20; out1$RemI <- out1$RemI/0.60
-out1$Rv <- out1$Rv/0.20; out1$Rs <- out1$Rs/0.20; out1$RemR <- out1$RemR/0.60
+colnames(testingeffdata) <- c("Time", "Suscv", "Suscs", "Infected_Iv", "Infected_Is", "Recovv", "Recovs", 
+                          "RemSusc", "RemInf", "RemRecov","TestingEff")
 
-colnames(out1) <- c("Time", "Suscv", "Suscs", "Suscr1", "Suscr2","Suscr3", 
-                    "Infected_Iv", "Infected_Is", "Infected_Ir1", "Infected_Ir2", "Infected_Ir3", 
-                    "Recovv", "Recovs", "Recovr1", "Recovr2", "Recovr2",
-                    "RemSusc", "RemInf", "RemRecov")
+# Testing Efficacy - 0% (100% Of Original Beta)
 
-statsinfecv <- melt(out1, id.vars = c("Time"), measure.vars = c("Infected_Iv", "Infected_Is", "RemInf"))
+statsinfecv <- melt(testingeffdata[testingeffdata$TestingEff == 0,], id.vars = c("Time"), 
+                    measure.vars = c("Infected_Iv", "Infected_Is", "RemInf"))
 statsinfecv$variable <- factor(statsinfecv$variable, levels=rev(levels(statsinfecv$variable)))
 
 pinfbase <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))  + theme_bw() +
@@ -173,31 +178,12 @@ pinfbase <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable
   geom_text(data = phase2, aes(x = xmin, y = 0.065, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 8) +
   geom_text(data = phase3, aes(x = xmin, y = 0.065, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 30) +
   geom_text(data = phase4, aes(x = xmin, y = 0.065, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 125) +
- geom_line(size = 1.02, stat = "identity")
+  geom_line(size = 1.02, stat = "identity")
 
-#### Shielders Testing - 75%  of Baseline ####
+# Testing Efficacy - 25% (75% Of Original Beta)
 
-parms = c(gamma = 1/(GenTime(3.3,2.8)), 
-          zeta = 1/365,
-          tstart1 = 71, 
-          tdur = (6*7),
-          test = 0.25) #CAN VARY THIS - DEPENDING ON FACTOR EXPLORED
-
-out1 <- data.frame(ode(y = init, func = SIRS, times = times, parms = parms))
-
-out1$RemS <- out1$Sr1 + out1$Sr2 + out1$Sr3
-out1$RemI <- out1$Ir1 + out1$Ir2 + out1$Ir3
-out1$RemR <- out1$Rr1 + out1$Rr2 + out1$Rr3
-out1$Sv <- out1$Sv/0.20; out1$Ss <- out1$Ss/0.20; out1$RemS <- out1$RemS/0.60
-out1$Iv <- out1$Iv/0.20; out1$Is <- out1$Is/0.20; out1$RemI <- out1$RemI/0.60
-out1$Rv <- out1$Rv/0.20; out1$Rs <- out1$Rs/0.20; out1$RemR <- out1$RemR/0.60
-
-colnames(out1) <- c("Time", "Suscv", "Suscs", "Suscr1", "Suscr2","Suscr3", 
-                    "Infected_Iv", "Infected_Is", "Infected_Ir1", "Infected_Ir2", "Infected_Ir3", 
-                    "Recovv", "Recovs", "Recovr1", "Recovr2", "Recovr2",
-                    "RemSusc", "RemInf", "RemRecov")
-
-statsinfecv <- melt(out1, id.vars = c("Time"), measure.vars = c("Infected_Iv", "Infected_Is", "RemInf"))
+statsinfecv <- melt(testingeffdata[testingeffdata$TestingEff == 0.25,], id.vars = c("Time"), 
+                    measure.vars = c("Infected_Iv", "Infected_Is", "RemInf"))
 statsinfecv$variable <- factor(statsinfecv$variable, levels=rev(levels(statsinfecv$variable)))
 
 pinf75 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))  + theme_bw() +
@@ -215,29 +201,9 @@ pinf75 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))
   geom_text(data = phase4, aes(x = xmin, y = 0.065, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 125) +
   geom_line(size = 1.02, stat = "identity")
 
-#### Shielders Testing - 50%  of Baseline ####
-
-parms = c(gamma = 1/(GenTime(3.3,2.8)), 
-          zeta = 1/365,
-          tstart1 = 71, 
-          tdur = (6*7),
-          test = 0.5) #CAN VARY THIS - DEPENDING ON FACTOR EXPLORED
-
-out1 <- data.frame(ode(y = init, func = SIRS, times = times, parms = parms))
-
-out1$RemS <- out1$Sr1 + out1$Sr2 + out1$Sr3
-out1$RemI <- out1$Ir1 + out1$Ir2 + out1$Ir3
-out1$RemR <- out1$Rr1 + out1$Rr2 + out1$Rr3
-out1$Sv <- out1$Sv/0.20; out1$Ss <- out1$Ss/0.20; out1$RemS <- out1$RemS/0.60
-out1$Iv <- out1$Iv/0.20; out1$Is <- out1$Is/0.20; out1$RemI <- out1$RemI/0.60
-out1$Rv <- out1$Rv/0.20; out1$Rs <- out1$Rs/0.20; out1$RemR <- out1$RemR/0.60
-
-colnames(out1) <- c("Time", "Suscv", "Suscs", "Suscr1", "Suscr2","Suscr3", 
-                    "Infected_Iv", "Infected_Is", "Infected_Ir1", "Infected_Ir2", "Infected_Ir3", 
-                    "Recovv", "Recovs", "Recovr1", "Recovr2", "Recovr2",
-                    "RemSusc", "RemInf", "RemRecov")
-
-statsinfecv <- melt(out1, id.vars = c("Time"), measure.vars = c("Infected_Iv", "Infected_Is", "RemInf"))
+# Testing Efficacy - 50% (50% Of Original Beta)
+statsinfecv <- melt(testingeffdata[testingeffdata$TestingEff == 0.5,], id.vars = c("Time"), 
+                    measure.vars = c("Infected_Iv", "Infected_Is", "RemInf"))
 statsinfecv$variable <- factor(statsinfecv$variable, levels=rev(levels(statsinfecv$variable)))
 
 pinf50 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))  + theme_bw() +
@@ -255,29 +221,9 @@ pinf50 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))
   geom_text(data = phase4, aes(x = xmin, y = 0.065, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 125) +
   geom_line(size = 1.02, stat = "identity")
 
-#### Shielders Testing - 25%  of Baseline ####
-
-parms = c(gamma = 1/(GenTime(3.3,2.8)), 
-          zeta = 1/365,
-          tstart1 = 71, 
-          tdur = (6*7),
-          test = 0.75) #CAN VARY THIS - DEPENDING ON FACTOR EXPLORED
-
-out1 <- data.frame(ode(y = init, func = SIRS, times = times, parms = parms))
-
-out1$RemS <- out1$Sr1 + out1$Sr2 + out1$Sr3
-out1$RemI <- out1$Ir1 + out1$Ir2 + out1$Ir3
-out1$RemR <- out1$Rr1 + out1$Rr2 + out1$Rr3
-out1$Sv <- out1$Sv/0.20; out1$Ss <- out1$Ss/0.20; out1$RemS <- out1$RemS/0.60
-out1$Iv <- out1$Iv/0.20; out1$Is <- out1$Is/0.20; out1$RemI <- out1$RemI/0.60
-out1$Rv <- out1$Rv/0.20; out1$Rs <- out1$Rs/0.20; out1$RemR <- out1$RemR/0.60
-
-colnames(out1) <- c("Time", "Suscv", "Suscs", "Suscr1", "Suscr2","Suscr3", 
-                    "Infected_Iv", "Infected_Is", "Infected_Ir1", "Infected_Ir2", "Infected_Ir3", 
-                    "Recovv", "Recovs", "Recovr1", "Recovr2", "Recovr2",
-                    "RemSusc", "RemInf", "RemRecov")
-
-statsinfecv <- melt(out1, id.vars = c("Time"), measure.vars = c("Infected_Iv", "Infected_Is", "RemInf"))
+# Testing Efficacy - 75% (25% Of Original Beta)
+statsinfecv <- melt(testingeffdata[testingeffdata$TestingEff == 0.75,], id.vars = c("Time"), 
+                    measure.vars = c("Infected_Iv", "Infected_Is", "RemInf"))
 statsinfecv$variable <- factor(statsinfecv$variable, levels=rev(levels(statsinfecv$variable)))
 
 pinf25 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))  + theme_bw() +
@@ -295,29 +241,9 @@ pinf25 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))
   geom_text(data = phase4, aes(x = xmin, y = 0.065, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 125) +
   geom_line(size = 1.02, stat = "identity")
 
-#### Shielders Testing - 0%  of Baseline ####
-
-parms = c(gamma = 1/(GenTime(3.3,2.8)), 
-          zeta = 1/365,
-          tstart1 = 71, 
-          tdur = (6*7),
-          test = 1) #CAN VARY THIS - DEPENDING ON FACTOR EXPLORED
-
-out1 <- data.frame(ode(y = init, func = SIRS, times = times, parms = parms))
-
-out1$RemS <- out1$Sr1 + out1$Sr2 + out1$Sr3
-out1$RemI <- out1$Ir1 + out1$Ir2 + out1$Ir3
-out1$RemR <- out1$Rr1 + out1$Rr2 + out1$Rr3
-out1$Sv <- out1$Sv/0.20; out1$Ss <- out1$Ss/0.20; out1$RemS <- out1$RemS/0.60
-out1$Iv <- out1$Iv/0.20; out1$Is <- out1$Is/0.20; out1$RemI <- out1$RemI/0.60
-out1$Rv <- out1$Rv/0.20; out1$Rs <- out1$Rs/0.20; out1$RemR <- out1$RemR/0.60
-
-colnames(out1) <- c("Time", "Suscv", "Suscs", "Suscr1", "Suscr2","Suscr3", 
-                    "Infected_Iv", "Infected_Is", "Infected_Ir1", "Infected_Ir2", "Infected_Ir3", 
-                    "Recovv", "Recovs", "Recovr1", "Recovr2", "Recovr2",
-                    "RemSusc", "RemInf", "RemRecov")
-
-statsinfecv <- melt(out1, id.vars = c("Time"), measure.vars = c("Infected_Iv", "Infected_Is", "RemInf"))
+# Testing Efficacy - 0% (0% Of Original Beta)
+statsinfecv <- melt(testingeffdata[testingeffdata$TestingEff == 1,], id.vars = c("Time"), 
+                    measure.vars = c("Infected_Iv", "Infected_Is", "RemInf"))
 statsinfecv$variable <- factor(statsinfecv$variable, levels=rev(levels(statsinfecv$variable)))
 
 pinf0 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))  + theme_bw() +
@@ -336,7 +262,8 @@ pinf0 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable)) 
   geom_line(size = 1.02, stat = "identity")
 
 #### Plotting for Fig 5 #### 
-#### Just 100, 50 and 0% ####
+# Just 100, 50 and 0% #
+#Need to Redo Plot for the Axis Labels
 pinf01 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))  + theme_bw() +
   labs(x ="Time (Days)", y = "Proportion Infected", color = "Population") + scale_y_continuous(limits = c(0,0.075), expand = c(0,0)) +
   theme(legend.position = "none", legend.title = element_blank(), legend.text=element_text(size=14),  axis.text=element_text(size=14),
@@ -352,15 +279,14 @@ pinf01 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))
   geom_text(data = phase4, aes(x = xmin, y = 0.065, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 125) +
   geom_line(size = 1.02, stat = "identity")
 
+#Plotting All 5 Plots 
+
 plot <- ggarrange(pinfbase, pinf75, pinf50, pinf25,pinf0, nrow = 3, ncol = 2, heights = c(0.5), font.label = c(size = 20),
                   labels = c("A", "B", "C", "D", "E"), common.legend = TRUE, legend = "bottom")
 
-#Anti-Aliasing in Plots - Can Ignore 
-setwd("C:/Users/amorg/Documents/PhD/nCoV Work/Figures/Enhanced Shielding/New")
-ggsave(plot, filename = "ShieldTest.png", dpi = 300, type = "cairo",
-       width = 14, height = 10, units = "in")
+#Plotting Just 3 Plots 
 
-plot <- ggarrange(pinfbase, NULL, pinf50, NULL, pinf01, 
+plotlim <- ggarrange(pinfbase, NULL, pinf50, NULL, pinf01, 
                   nrow = 5, ncol =1, align = "v", 
                   heights = c(0.5, -0.03, 0.5,-0.05, 0.6), 
                   font.label = c(size = 20),labels = c("A", "", "B", "", "C"),
@@ -368,5 +294,10 @@ plot <- ggarrange(pinfbase, NULL, pinf50, NULL, pinf01,
 
 #Anti-Aliasing in Plots - Can Ignore 
 setwd("C:/Users/amorg/Documents/PhD/nCoV Work/Figures/Enhanced Shielding/New")
-ggsave(plot, filename = "ShieldTest100500.png", dpi = 300, type = "cairo",
+ggsave(plot, filename = "Fig12_All.png", dpi = 300, type = "cairo",
+       width = 14, height = 10, units = "in")
+
+
+setwd("C:/Users/amorg/Documents/PhD/nCoV Work/Figures/Enhanced Shielding/New")
+ggsave(plotlim, filename = "Fig12.png", dpi = 300, type = "cairo",
        width = 8.5, height = 11, units = "in")

@@ -13,7 +13,7 @@ GenTime <- function(T2, R0) {
 #Function to model intervention - currently set at baseline - added additional functionality to it
 beta1 <- function(time, tstart1, tdur, scaling) {
   gamma <- 1/(GenTime(3.3,2.8))
-  beta1_2 <- (0.8*(gamma))*scaling
+  beta1_2 <- 0.4*gamma
   betalin <- approxfun(x=c(tstart1+tdur, tstart1+tdur+(12*7)), y = c(0.8*(gamma), beta1_2), method="linear", rule  =2)
   ifelse((time >= tstart1 & time <= tstart1+tdur), #Phase 2
          0.8*(gamma),
@@ -27,7 +27,7 @@ plot(beta1(seq(0,730), 71, (6*7), 0.5), ylim = c(0,0.5))
 
 beta2 <- function(time, tstart1, tdur, scaling) {
   gamma <- 1/(GenTime(3.3,2.8))
-  beta1_2 <- (2.8*(gamma) - ((2.8*(gamma) - 0.9*(gamma))*scaling))
+  beta1_2 <- 1.85*gamma
   betalin <- approxfun(x=c(tstart1+tdur, tstart1+tdur+(12*7)), y = c(0.9*(gamma), beta1_2), method="linear", rule  =2)
   ifelse((time >= tstart1 & time <= tstart1+tdur), #Phase 2
          0.9*(gamma),
@@ -41,7 +41,7 @@ plot(beta2(seq(0,730), 71, (6*7), 0.5))
 
 beta3 <- function(time, tstart1, tdur, scaling) {
   gamma <- 1/(GenTime(3.3,2.8))
-  beta1_2 <- (2.8*(gamma) - (2.8*(gamma) - 1.7*(gamma))*scaling)
+  beta1_2 <- 2.25*gamma
   betalin <- approxfun(x=c(tstart1+tdur, tstart1+tdur+(12*7)), y = c(0.9*(gamma), beta1_2), method="linear", rule  =2)
   ifelse((time >= tstart1 & time <= tstart1+tdur), #Phase 2
          0.9*(gamma),
@@ -56,7 +56,7 @@ plot(beta3(seq(0,730), 71, (6*7), 0.5))
 
 beta4 <- function(time,tstart1,tdur,scaling) {
   gamma <- 1/(GenTime(3.3,2.8))
-  beta1_2 <- 0.8*(gamma) *scaling
+  beta1_2 <- 0.4*gamma
   betalin <- approxfun(x=c(tstart1+tdur, tstart1+tdur+(12*7)), y = c(0.8*(gamma), beta1_2), method="linear", rule  =2)
   ifelse((time >= tstart1 & time <= tstart1+tdur), #Phase 2
          0.8*(gamma),
@@ -105,8 +105,7 @@ times <- seq(0, 478, by = 1)
 
 parms = c(gamma = 1/(GenTime(3.3,2.8)), 
           tstart1 = 71, 
-          tdur = 6*7,
-          scaling = 0.5) #CAN VARY THIS - DEPENDING ON FACTOR EXPLORED
+          tdur = 6*7) #CAN VARY THIS - DEPENDING ON FACTOR EXPLORED
 
 out1 <- data.frame(ode(y = init, func = SIRS, times = times, parms = parms))
 
@@ -116,9 +115,9 @@ out1$RemI <- out1$Ir1 + out1$Ir2 + out1$Ir3
 out1$Sv <- out1$Sv/0.20; out1$Ss <- out1$Ss/0.20; out1$RemS <- out1$RemS/0.60
 out1$Iv <- out1$Iv/0.20; out1$Is <- out1$Is/0.20; out1$RemI <- out1$RemI/0.60
 
-out1$Beta1 <- beta1(times, 71, (6*7), as.numeric(parms[4])) 
-out1$Beta2 <- beta2(times, 71, (6*7), as.numeric(parms[4])) 
-out1$Beta3 <- beta3(times, 71, (6*7), as.numeric(parms[4]))
+out1$Beta1 <- beta1(times, 71, (6*7)) 
+out1$Beta2 <- beta2(times, 71, (6*7)) 
+out1$Beta3 <- beta3(times, 71, (6*7))
 
 colnames(out1) <- c("Time", "Suscv", "Suscs", "Suscr1", "Suscr2","Suscr3", 
                     "Infected_Iv", "Infected_Is", "Infected_Ir1", "Infected_Ir2", "Infected_Ir3", 
@@ -171,5 +170,5 @@ plot <- ggarrange(pinf, NULL, pbeta, nrow = 3, ncol =1, align = "v",
 
 #Anti-Aliasing in Plots - Can Ignore 
 setwd("C:/Users/amorg/Documents/PhD/nCoV Work/Figures/Enhanced Shielding/New")
-ggsave(plot, filename = "FigSIRS.png", dpi = 300, type = "cairo",
+ggsave(plot, filename = "FigS2_SIS.png", dpi = 300, type = "cairo",
        width = 8.5, height = 11, units = "in")
