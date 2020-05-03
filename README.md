@@ -17,15 +17,25 @@ The name of '.csv' correspond to each population structure analysed and represen
 ### R
 R code can be found in the `Enhanced Shielding` folder and is organised according to the code used to plot figures found in the manuscript. **WORK IN PROGRESS** Current code is available for:
 * Figure 2 - Baseline Analysis using "Central" Parameters
+	* `Enhanced_Shielding_Baseline_Fig2.R`
 * Figure 3 - Sensitivity analysis for the ramp-up and ramp-down period for lockdown release
+	* `Enhanced_Shielding_Phase3_Fig3.R`
 * Figure 4 - Sensitivity analysis of the lockdown trigger day and the Phase 2 R_e
+	* `Enhanced_Shielding_TrigDay_Phase2_Fig4.R`
 * Figure 5 - Sensitivity analysis of the zeta parameter and Phase 1 R_e
+	* `Enhanced_Shielding_Zeta_Phase1R0_Fig5.R`
 * Figure 8 - Sensitivity analysis of Phase 2 lockdown duration
+	* `Enhanced_Shielding_LockdownDur_Fig8.R`
 * Figure 9 - Analysis of Vulnerable population enhanced shielding % compliance (Phase 4)
+	* `Enhanced_Shielding_Compliance_Fig9.R`
 * Figure 10 - Sensitivity analysis of all Phase 4 Betas 
+	* `Enhanced_Shielding_Phase4_Fig10.R`
 * Figure 12 - Analysis of efficacy of Shielders % testing
+	* `Enhanced_Shielding_ShieldTest_Fig12.R`
 * Figure S2 - Sensitivity analysis SIS model w/ baseline parameters
+	* `Enhanced_Shielding_SIS_FigS2.R`
 * Figure S3 & 5 - Sensitivity analysis differing population structure
+	* `Enhanced_Shielding_PopStruct_FigS3_5.R`
 
 ### C++
 **WIP**
