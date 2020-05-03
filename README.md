@@ -5,10 +5,10 @@ Repository for R and C++ code used to model enhanced shielding measures on a sim
 ## Running the Code
 ### R 
 R code should run without further modification (after installing pre-requisite packages). 
-The chosen directory where plots are saved can be altered by changing the 'setwd()' function at the top of each script. Plots are automatically saved in the chosen working directory if each script is run. 
+The chosen directory where plots are saved can be altered by changing the `setwd()` function at the top of each script. Plots are automatically saved in the chosen working directory if each script is run. 
 
-Code to run analysis of the population structure 'Enhanced_Shielding_PopStruct_FigS3_5.R' (Figure S3 & 5) require the corresponding '.csv' files to be present in the User's chosen working directory.
-The name of '.csv' correspond to each population structure analysed and represent simulations implemented in C++ and imported into R for graphical output.
+Code to run analysis of the population structure `Enhanced_Shielding_PopStruct_FigS3_5.R` (Figure S3 & 5) require the corresponding `.csv` files to be present in the User's chosen working directory.
+The name of `.csv` correspond to each population structure analysed and represent simulations implemented in C++ and imported into R for graphical output.
 
 ### C++
 **WIP**
