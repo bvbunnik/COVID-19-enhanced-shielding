@@ -291,22 +291,22 @@ pinf60 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))
   geom_text(data = phase4, aes(x = xmin, y = 0.065, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 125) +
   geom_line(size = 1.02, stat = "identity")
 
-#### 20-40-40 ####
+#### 40-20-40 ####
 
-outimp <- read.csv("C:/Users/amorg/Documents/PhD/nCoV Work/Models/SIRS_MComp_20-40-40.csv")
+outimp <- read.csv("C:/Users/amorg/Documents/PhD/nCoV Work/Models/SIRS_MComp_20-40-40_v1.csv")
 out <- outimp[, -grep( "cum" , colnames(outimp) )]
 out <- out[, -grep( "p" , colnames(out) )]
 
 out1 <- data.frame("time" = out$t, 
-                   "SuscV" = out[,grepl( "Sv" , names(out) )]/0.2,
-                   "SuscS" = rowSums(out[,grepl( "Sh" , names(out) )])/0.4,
-                   "SuscR" = rowSums(out[,grepl( "Sr" , names(out) )])/0.4,
-                   "InfV" = out[,grepl( "Iv" , names(out) )]/0.2,
-                   "InfS" = rowSums(out[,grepl( "Ih" , names(out) )])/0.4,
-                   "InfR" = rowSums(out[,grepl( "Ir" , names(out) )])/0.4,
-                   "RecovV" = out[,grepl( "Rv" , names(out) )]/0.2,
-                   "RecovS" = rowSums(out[,grepl( "Rh" , names(out) )])/0.4,
-                   "RecovR" = rowSums(out[,grepl( "Rr" , names(out) )])/0.4)
+                   "SuscV" = rowSums(out[,grepl( "Sv" , names(out) )])/0.4,
+                   "SuscS" = out[,grepl( "Ss" , names(out) )]/0.2,
+                   "SuscR" = rowSums(out[,grepl( "Sg" , names(out) )])/0.4,
+                   "InfV" = rowSums(out[,grepl( "Iv" , names(out) )])/0.4,
+                   "InfS" = out[,grepl( "Is" , names(out) )]/0.2,
+                   "InfR" = rowSums(out[,grepl( "Ig" , names(out) )])/0.4,
+                   "RecovV" = rowSums(out[,grepl( "Rv" , names(out) )])/0.4,
+                   "RecovS" = out[,grepl( "Rs" , names(out) )]/0.2,
+                   "RecovR" = rowSums(out[,grepl( "Rg" , names(out) )])/0.4)
 
 
 colnames(out1) <- c("Time", "Suscv", "Suscs", "Suscr", "Infected_Iv", "Infected_Is", "Infected_Ir", "Recovv", "Recovs", "Recovr")
