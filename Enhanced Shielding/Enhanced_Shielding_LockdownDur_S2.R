@@ -1,6 +1,6 @@
+setwd("C:/Users/amorg/Documents/PhD/nCoV Work/Figures/Enhanced Shielding/New") # This is where the plots Output
 rm(list=ls())
-library("deSolve"); library("ggplot2"); library("ggpubr"); library("reshape2"); library("dplyr"); library("RColorBrewer"); library("sensitivity");library("fast")
-library("Cairo")
+library("deSolve"); library("ggplot2"); library("ggpubr"); library("reshape2"); library("dplyr"); library("Cairo")
 
 #### Model Functions ####
 #Function for the generation time/(1/gamma) parameter
@@ -10,9 +10,9 @@ GenTime <- function(T2, R0) {
 }
 
 #Function to model intervention - currently set at baseline - added additional functionality to it
-beta1 <- function(time, tstart1, tdur, scaling) {
+beta1 <- function(time, tstart1, tdur) {
   gamma <- 1/(GenTime(3.3,2.8))
-  beta1_2 <- (0.8*(gamma))*scaling
+  beta1_2 <- 0.4*(gamma)
   betalin <- approxfun(x=c(tstart1+tdur, tstart1+tdur+(12*7)), y = c(0.8*(gamma), beta1_2), method="linear", rule  =2)
   ifelse((time >= tstart1 & time <= tstart1+tdur), #Phase 2
          0.8*(gamma),
@@ -24,9 +24,9 @@ beta1 <- function(time, tstart1, tdur, scaling) {
 
 plot(beta1(seq(0,730), 71, (6*7), 0.5), ylim = c(0,0.5))
 
-beta2 <- function(time, tstart1, tdur, scaling) {
+beta2 <- function(time, tstart1, tdur) {
   gamma <- 1/(GenTime(3.3,2.8))
-  beta1_2 <- (2.8*(gamma) - ((2.8*(gamma) - 0.9*(gamma))*scaling))
+  beta1_2 <- 1.85*gamma
   betalin <- approxfun(x=c(tstart1+tdur, tstart1+tdur+(12*7)), y = c(0.9*(gamma), beta1_2), method="linear", rule  =2)
   ifelse((time >= tstart1 & time <= tstart1+tdur), #Phase 2
          0.9*(gamma),
@@ -38,9 +38,9 @@ beta2 <- function(time, tstart1, tdur, scaling) {
 
 plot(beta2(seq(0,730), 71, (6*7), 0.5))
 
-beta3 <- function(time, tstart1, tdur, scaling) {
+beta3 <- function(time, tstart1, tdur) {
   gamma <- 1/(GenTime(3.3,2.8))
-  beta1_2 <- (2.8*(gamma) - (2.8*(gamma) - 1.7*(gamma))*scaling)
+  beta1_2 <- 2.25*gamma
   betalin <- approxfun(x=c(tstart1+tdur, tstart1+tdur+(12*7)), y = c(0.9*(gamma), beta1_2), method="linear", rule  =2)
   ifelse((time >= tstart1 & time <= tstart1+tdur), #Phase 2
          0.9*(gamma),
@@ -53,9 +53,9 @@ beta3 <- function(time, tstart1, tdur, scaling) {
 plot(beta3(seq(0,730), 71, (6*7), 0.5))
 
 
-beta4 <- function(time,tstart1,tdur,scaling) {
+beta4 <- function(time,tstart1,tdur) {
   gamma <- 1/(GenTime(3.3,2.8))
-  beta1_2 <- 0.8*(gamma) *scaling
+  beta1_2 <- 0.4*gamma
   betalin <- approxfun(x=c(tstart1+tdur, tstart1+tdur+(12*7)), y = c(0.8*(gamma), beta1_2), method="linear", rule  =2)
   ifelse((time >= tstart1 & time <= tstart1+tdur), #Phase 2
          0.8*(gamma),
@@ -70,10 +70,10 @@ plot(beta4(seq(0,730), 71, (6*7), 0.5))
 #Function for Shielded/non-Shielded Pop
 SIRS <- function(time, state, parameters) {
   with(as.list(c(state, parameters)), {
-    beta1 <- beta1(time,tstart1,tdur,scaling)
-    beta2 <- beta2(time,tstart1,tdur,scaling)
-    beta3 <- beta3(time,tstart1,tdur,scaling)
-    beta4 <- beta4(time,tstart1,tdur,scaling)
+    beta1 <- beta1(time,tstart1,tdur)
+    beta2 <- beta2(time,tstart1,tdur)
+    beta3 <- beta3(time,tstart1,tdur)
+    beta4 <- beta4(time,tstart1,tdur)
     
     dSv = - beta1*Iv*Sv - beta1*Is*Sv - beta4*Ir1*Sv - beta4*Ir2*Sv - beta4*Ir3*Sv + zeta*Rv
     dSs = - beta1*Iv*Ss - beta1*Is*Ss - beta2*Ir1*Ss - beta2*Ir2*Ss - beta2*Ir3*Ss + zeta*Rs
@@ -99,20 +99,21 @@ SIRS <- function(time, state, parameters) {
   })
 }
 
-#### Baseline - 6 Week Lockdown ####
-
-#Initial Conditions and Times
+#### Common Parameters - Initial Conditions ####
 
 init <- c(Sv = 0.2 - 0.0001*0.2, Ss = 0.2 - 0.0001*0.2, 
           Sr1 = 0.2 - 0.0001*0.2, Sr2 = 0.2 - 0.0001*0.2, Sr3 = 0.2 - 0.0001*0.2,
           Iv = 0.0001*0.2, Is = 0.0001*0.2, Ir1 = 0.0001*0.2, Ir2 = 0.0001*0.2, Ir3 = 0.0001*0.2,   
           Rv= 0, Rs = 0, Rr1 = 0, Rr2 = 0, Rr3 = 0)
 times <- seq(0, 478, by = 1)
+
+#### Baseline - 6 Week Lockdown ####
+#Initial Conditions and Times
+
 parms = c(gamma = 1/(GenTime(3.3,2.8)), 
           zeta = 1/365,
           tstart1 = 71, 
-          tdur = (6*7),
-          scaling = 0.5) #CAN VARY THIS - DEPENDING ON FACTOR EXPLORED
+          tdur = (6*7)) 
 
 out1 <- data.frame(ode(y = init, func = SIRS, times = times, parms = parms))
 
@@ -155,16 +156,10 @@ pinf6 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable)) 
 
 #Initial Conditions and Times
 
-init <- c(Sv = 0.2 - 0.0001*0.2, Ss = 0.2 - 0.0001*0.2, 
-          Sr1 = 0.2 - 0.0001*0.2, Sr2 = 0.2 - 0.0001*0.2, Sr3 = 0.2 - 0.0001*0.2,
-          Iv = 0.0001*0.2, Is = 0.0001*0.2, Ir1 = 0.0001*0.2, Ir2 = 0.0001*0.2, Ir3 = 0.0001*0.2,   
-          Rv= 0, Rs = 0, Rr1 = 0, Rr2 = 0, Rr3 = 0)
-times <- seq(0, 478, by = 1)
 parms = c(gamma = 1/(GenTime(3.3,2.8)), 
           zeta = 1/365,
           tstart1 = 71, 
-          tdur = (9*7),
-          scaling = 0.5) #CAN VARY THIS - DEPENDING ON FACTOR EXPLORED
+          tdur = (9*7)) 
 
 out1 <- data.frame(ode(y = init, func = SIRS, times = times, parms = parms))
 
@@ -203,20 +198,13 @@ pinf9 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable)) 
   geom_text(data = phase4, aes(x = xmin, y = 0.06, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 110) +
   geom_line(size = 1.02, stat = "identity")
 
-
 #### Baseline - 12 Week Lockdown ####
 #Initial Conditions and Times
 
-init <- c(Sv = 0.2 - 0.0001*0.2, Ss = 0.2 - 0.0001*0.2, 
-          Sr1 = 0.2 - 0.0001*0.2, Sr2 = 0.2 - 0.0001*0.2, Sr3 = 0.2 - 0.0001*0.2,
-          Iv = 0.0001*0.2, Is = 0.0001*0.2, Ir1 = 0.0001*0.2, Ir2 = 0.0001*0.2, Ir3 = 0.0001*0.2,   
-          Rv= 0, Rs = 0, Rr1 = 0, Rr2 = 0, Rr3 = 0)
-times <- seq(0, 478, by = 1)
 parms = c(gamma = 1/(GenTime(3.3,2.8)), 
           zeta = 1/365,
           tstart1 = 71, 
-          tdur = (12*7),
-          scaling = 0.5) #CAN VARY THIS - DEPENDING ON FACTOR EXPLORED
+          tdur = (12*7)) 
 
 out1 <- data.frame(ode(y = init, func = SIRS, times = times, parms = parms))
 
@@ -256,9 +244,11 @@ pinf12 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))
   geom_line(size = 1.02, stat = "identity")
 
 #### Plotting ####
-plot <- ggarrange(pinf6, NULL, pinf9,NULL, pinf12, nrow = 5, ncol =1, align = "v", heights = c(0.5, -0.03, 0.5,-0.05, 0.6), font.label = c(size = 20) )
+plot <- ggarrange(pinf6, NULL, pinf9,NULL, pinf12, nrow = 5, ncol =1, align = "v", 
+                  heights = c(0.5, -0.03, 0.5, -0.03, 0.55), 
+                  labels = c("A","", "B","", "C"), font.label = c(size = 20), common.legend = TRUE, legend = "bottom" )
 
 #Anti-Aliasing in Plots - Can Ignore 
-setwd("C:/Users/amorg/Documents/PhD/nCoV Work/Figures/Enhanced Shielding/New")
-ggsave(plot, filename = "Lockdown.png", dpi = 300, type = "cairo",
+
+ggsave(plot, filename = "FigS2.png", dpi = 300, type = "cairo",
        width = 8.5, height = 11, units = "in")
