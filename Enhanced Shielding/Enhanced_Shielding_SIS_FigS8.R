@@ -1,8 +1,8 @@
 setwd("C:/Users/amorg/Documents/PhD/nCoV Work/Figures/Enhanced Shielding/New") # This is where the plots Output
 rm(list=ls())
-library("deSolve"); library("ggplot2"); library("ggpubr"); library("dplyr"); library("Cairo")
+library("deSolve"); library("ggplot2"); library("ggpubr"); library("reshape2"); library("Cairo")
 
-#### Model Functions ####
+#### Model Functions - Generation Time + Betas + ODEs ####
 
 #Function for the generation time/(1/gamma) parameter
 GenTime <- function(T2, R0) {
@@ -10,7 +10,7 @@ GenTime <- function(T2, R0) {
   return(G)
 }
 
-#Function to model intervention - currently set at baseline - added additional functionality to it
+#Beta Functions - Same as Baseline Central Values 
 beta1 <- function(time, tstart1, tdur, scaling) {
   gamma <- 1/(GenTime(3.3,2.8))
   beta1_2 <- 0.4*gamma
@@ -32,7 +32,7 @@ beta2 <- function(time, tstart1, tdur, scaling) {
   ifelse((time >= tstart1 & time <= tstart1+tdur), #Phase 2
          0.9*(gamma),
          ifelse((time >= tstart1+tdur & time <= tstart1+tdur+(12*7)), #Phase 3
-                betalin(time),
+                betalin(time),   
                 ifelse((time >= tstart1+tdur+(12*7) & time <= 730),
                        beta1_2,
                        1.7*(gamma))))}
@@ -68,7 +68,7 @@ beta4 <- function(time,tstart1,tdur,scaling) {
 
 plot(beta4(seq(0,730), 71, (6*7), 0.5))
 
-#Function for Shielded/non-Shielded Pop
+#ODEs for the SIS Model Structure 
 SIRS <- function(time, state, parameters) {
   with(as.list(c(state, parameters)), {
     beta1 <- beta1(time,tstart1,tdur,scaling)
@@ -93,7 +93,7 @@ SIRS <- function(time, state, parameters) {
   })
 }
 
-#### Testing the Model Structure + Obtaining Specific Information from Model Runs ####
+#### Running the Model w/ Baseline Parameter Set ####
 
 #Initial Conditions and Times
 
@@ -105,16 +105,22 @@ times <- seq(0, 478, by = 1)
 
 parms = c(gamma = 1/(GenTime(3.3,2.8)), 
           tstart1 = 71, 
-          tdur = 6*7) #CAN VARY THIS - DEPENDING ON FACTOR EXPLORED
+          tdur = 6*7) 
 
+#Initialising the Phases (Needed for Shading on Plots)
+phase1 <- data.frame(xmin=0, xmax=71, ymin=-Inf, ymax=Inf, name = "P1")
+phase2 <- data.frame(xmin=71, xmax=71+(6*7), ymin=-Inf, ymax=Inf, name = "P2")
+phase3 <- data.frame(xmin=71+(6*7), xmax=71+(6*7)+(12*7), ymin=-Inf, ymax=Inf, name = "P3")
+phase4 <- data.frame(xmin=71+(6*7)+(12*7), xmax=Inf, ymin=-Inf, ymax=Inf, name = "P4")
+
+#Solve the ODEs
 out1 <- data.frame(ode(y = init, func = SIRS, times = times, parms = parms))
 
+#Manipulate the Dataframe
 out1$RemS <- out1$Sr1 + out1$Sr2 + out1$Sr3
 out1$RemI <- out1$Ir1 + out1$Ir2 + out1$Ir3
-
 out1$Sv <- out1$Sv/0.20; out1$Ss <- out1$Ss/0.20; out1$RemS <- out1$RemS/0.60
 out1$Iv <- out1$Iv/0.20; out1$Is <- out1$Is/0.20; out1$RemI <- out1$RemI/0.60
-
 out1$Beta1 <- beta1(times, 71, (6*7)) 
 out1$Beta2 <- beta2(times, 71, (6*7)) 
 out1$Beta3 <- beta3(times, 71, (6*7))
@@ -124,15 +130,10 @@ colnames(out1) <- c("Time", "Suscv", "Suscs", "Suscr1", "Suscr2","Suscr3",
                     "RemSusc", "RemInf",
                     "Beta_1/4", "Beta_2", "Beta_3")
 
+#Prepare for GGPlot
 statsinfecv <- melt(out1, id.vars = c("Time"), measure.vars = c("Infected_Iv", "Infected_Is", "RemInf"))
 statsinfecv$variable <- factor(statsinfecv$variable, levels=rev(levels(statsinfecv$variable)))
-
 statsbeta1 <- melt(out1, id.vars =  c("Time"), measure.vars = c("Beta_1/4", "Beta_2", "Beta_3"))
-
-phase1 <- data.frame(xmin=0, xmax=71, ymin=-Inf, ymax=Inf, name = "P1")
-phase2 <- data.frame(xmin=71, xmax=71+(6*7), ymin=-Inf, ymax=Inf, name = "P2")
-phase3 <- data.frame(xmin=71+(6*7), xmax=71+(6*7)+(12*7), ymin=-Inf, ymax=Inf, name = "P3")
-phase4 <- data.frame(xmin=71+(6*7)+(12*7), xmax=Inf, ymin=-Inf, ymax=Inf, name = "P4")
 
 #### Aggregated Plots - Infecteds, Beta and R_e ####
 pinf <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))  + theme_bw() +
@@ -151,7 +152,7 @@ pinf <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))  
   geom_line(size = 1.02, stat = "identity")
 
 pbeta <- ggplot(data = statsbeta1, aes(x = (Time), y = value, lty = variable)) + theme_bw() +
-  labs(x ="Time (Days)", y = "Beta Value", lty = " ") + scale_y_continuous(limits = c(0,0.35),  expand = c(0,0)) +
+  labs(x ="Time (Days)", y = "Beta Value", lty = " ") + scale_y_continuous(limits = c(0,0.4),  expand = c(0,0)) +
   theme(legend.position = "bottom", legend.title = element_text(size=14), legend.text=element_text(size=14),  axis.text=element_text(size=14),
         axis.title.y=element_text(size=14),axis.title.x= element_text(size=14), 
         legend.spacing.x = unit(0.3, 'cm'), plot.margin=unit(c(0.7,0.7,0.8,0.8),"cm")) + scale_x_continuous(expand = c(0, 0))  + 
@@ -159,16 +160,15 @@ pbeta <- ggplot(data = statsbeta1, aes(x = (Time), y = value, lty = variable)) +
   geom_rect(data=phase2, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.5, inherit.aes = FALSE) +
   geom_rect(data=phase3, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.35, inherit.aes = FALSE) +
   geom_rect(data=phase4, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="grey", alpha=0.5, inherit.aes = FALSE) +
-  geom_text(data = phase1, aes(x = xmin, y = 0.27, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 25) +
-  geom_text(data = phase2, aes(x = xmin, y = 0.27, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 8) +
-  geom_text(data = phase3, aes(x = xmin, y = 0.27, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 30) +
-  geom_text(data = phase4, aes(x = xmin, y = 0.27, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 125) +
+  geom_text(data = phase1, aes(x = xmin, y = 0.32, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 25) +
+  geom_text(data = phase2, aes(x = xmin, y = 0.32, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 8) +
+  geom_text(data = phase3, aes(x = xmin, y = 0.32, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 30) +
+  geom_text(data = phase4, aes(x = xmin, y = 0.32, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 125) +
   geom_line(size = 1.02, stat = "identity", col = "black")
 
 plot <- ggarrange(pinf, NULL, pbeta, nrow = 3, ncol =1, align = "v", 
-                  heights = c(0.9, -0.03, 0.4), labels = c("A","", "B",""), font.label = c(size = 20) )
+                  heights = c(0.9, -0.03, 0.5), labels = c("A","", "B",""), font.label = c(size = 20) )
 
 #Anti-Aliasing in Plots - Can Ignore 
-setwd("C:/Users/amorg/Documents/PhD/nCoV Work/Figures/Enhanced Shielding/New")
-ggsave(plot, filename = "FigS2_SIS.png", dpi = 300, type = "cairo",
+ggsave(plot, filename = "FigS8.png", dpi = 300, type = "cairo",
        width = 8.5, height = 11, units = "in")

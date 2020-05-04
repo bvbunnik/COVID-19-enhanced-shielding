@@ -150,7 +150,7 @@ statsinfecv$variable <- factor(statsinfecv$variable, levels=rev(levels(statsinfe
 #Plotting
 pinf12 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))  + theme_bw() +
   labs(x ="Time (Days)", y = "Proportion Infected") + scale_y_continuous(limits = c(0,0.07), expand = c(0,0)) +
-  theme(legend.position = "none", legend.title = element_text(size=14), legend.text=element_text(size=14),  axis.text=element_text(size=14),
+  theme(legend.position = "none", legend.title = element_blank(), legend.text=element_text(size=14),  axis.text=element_text(size=14),
         axis.title.y=element_text(size=14),axis.title.x = element_blank(), 
         legend.spacing.x = unit(0.3, 'cm'), plot.margin=unit(c(0.7,0.7,0.8,0.8),"cm")) + scale_x_continuous(expand = c(0, 0)) + 
   scale_color_manual(values=c('blue','darkgreen','red'), labels= c("General", "Shielders", "Vulnerable")) +
@@ -203,7 +203,7 @@ statsinfecv$variable <- factor(statsinfecv$variable, levels=rev(levels(statsinfe
 #Plotting
 pinf6 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))  + theme_bw() +
   labs(x ="Time (Days)", y = "Proportion Infected") + scale_y_continuous(limits = c(0,0.07), expand = c(0,0)) +
-  theme(legend.position = "none", legend.title = element_text(size=14), legend.text=element_text(size=14),  axis.text=element_text(size=14),
+  theme(legend.position = "none", legend.title = element_blank(), legend.text=element_text(size=14),  axis.text=element_text(size=14),
         axis.title.y=element_text(size=14),axis.title.x = element_blank(), 
         legend.spacing.x = unit(0.3, 'cm'), plot.margin=unit(c(0.7,0.7,0.8,0.8),"cm")) + scale_x_continuous(expand = c(0, 0)) + 
   scale_color_manual(values=c('blue','darkgreen','red'), labels= c("General", "Shielders", "Vulnerable")) +
@@ -256,7 +256,7 @@ statsinfecv$variable <- factor(statsinfecv$variable, levels=rev(levels(statsinfe
 #Plotting
 pinf18 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))  + theme_bw() +
   labs(x ="Time (Days)", y = "Proportion Infected") + scale_y_continuous(limits = c(0,0.07), expand = c(0,0)) +
-  theme(legend.position = "none", legend.title = element_text(size=14), legend.text=element_text(size=14),  axis.text=element_text(size=14),
+  theme(legend.position = "none", legend.title = element_blank(), legend.text=element_text(size=14),  axis.text=element_text(size=14),
         axis.title.y=element_text(size=14),axis.title.x = element_text(size=14), 
         legend.spacing.x = unit(0.3, 'cm'), plot.margin=unit(c(0.7,0.7,0.8,0.8),"cm")) + scale_x_continuous(expand = c(0, 0)) + 
   scale_color_manual(values=c('blue','darkgreen','red'), labels= c("General", "Shielders", "Vulnerable")) +
@@ -273,9 +273,9 @@ pinf18 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))
 
 #GGARRANGE
 p1 <- ggarrange(pinf6, NULL, pinf12, NULL, pinf18, nrow = 5, ncol = 1, align = "v", 
-                heights = c(0.5, -0.03, 0.5, -0.03, 0.5), 
+                heights = c(0.5, -0.03, 0.5, -0.03, 0.55), 
                 labels = c("A","", "B","", "C"), font.label = c(size = 20), common.legend = TRUE, legend = "bottom" )
 
 #Anti-Aliasing in Plots - Can Ignore 
-ggsave(p1, filename = "Fig3.png", dpi = 300, type = "cairo",
+ggsave(p1, filename = "FigS3.png", dpi = 300, type = "cairo",
        width = 8.5, height = 11, units = "in")

@@ -1,15 +1,16 @@
+setwd("C:/Users/amorg/Documents/PhD/nCoV Work/Figures/Enhanced Shielding/New") # This is where the plots Output
 rm(list=ls())
-library("deSolve"); library("ggplot2"); library("ggpubr"); library("reshape2"); library("dplyr"); library("RColorBrewer"); library("sensitivity");library("fast")
-library("Cairo")
+library("deSolve"); library("ggplot2"); library("ggpubr"); library("reshape2"); library("Cairo")
 
-#### Model Functions ####
+#### Model Functions - Generation Time + Betas + ODEs ####
+
 #Function for the generation time/(1/gamma) parameter
 GenTime <- function(T2, R0) {
   G = T2 * ((R0-1)/log(2))
   return(G)
 }
 
-#Function to model intervention - currently set at baseline - added additional functionality to it
+#Beta Functions - Added Compliance Scaling Factor which alters Betas TO and FROM the vulnerables
 betacomp <- function(time, tstart1, tdur, comp) {
   gamma <- 1/(GenTime(3.3,2.8))
   beta1_2 <- (0.4+((1.7-0.4)*(1-comp)))*(gamma)

@@ -1,15 +1,15 @@
 setwd("C:/Users/amorg/Documents/PhD/nCoV Work/Figures/Enhanced Shielding/New") # This is where the plots Output
 rm(list=ls())
-library("deSolve"); library("ggplot2"); library("ggpubr"); library("reshape2"); library("dplyr"); library("Cairo")
+library("deSolve"); library("ggplot2"); library("ggpubr"); library("reshape2"); library("Cairo")
 
-#### Model Functions ####
+#### Model Functions - Generation Time + Betas + ODEs ####
 #Function for the generation time/(1/gamma) parameter
 GenTime <- function(T2, R0) {
   G = T2 * ((R0-1)/log(2))
   return(G)
 }
 
-#Function to model intervention - currently set at baseline - added additional functionality to it
+#Betas for the Intervention - Phase 4 is a scaling factor which affects all Betas during Phase 4 equally 
 beta1 <- function(time, tstart1, tdur, phase4) {
   gamma <- 1/(GenTime(3.3,2.8))
   beta1_2 <- 0.4*gamma*phase4
@@ -66,7 +66,7 @@ beta4 <- function(time,tstart1,tdur, phase4) {
 
 plot(beta4(seq(0,730), 71, (6*7), 0.75))
 
-#Function for Shielded/non-Shielded Pop
+#ODEs integrating new betas in
 SIRS <- function(time, state, parameters) {
   with(as.list(c(state, parameters)), {
     beta1 <- beta1(time,tstart1,tdur, phase4)

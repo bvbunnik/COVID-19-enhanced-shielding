@@ -244,10 +244,11 @@ pinf12 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))
   geom_line(size = 1.02, stat = "identity")
 
 #### Plotting ####
-plot <- ggarrange(pinf6, NULL, pinf9,NULL, pinf12, nrow = 5, ncol =1, align = "v", heights = c(0.5, -0.03, 0.5,-0.05, 0.6), font.label = c(size = 20),
-                  labels = c("A","", "B","", "C"))
+plot <- ggarrange(pinf6, NULL, pinf9,NULL, pinf12, nrow = 5, ncol =1, align = "v", 
+                  heights = c(0.5, -0.03, 0.5, -0.03, 0.55), 
+                  labels = c("A","", "B","", "C"), font.label = c(size = 20), common.legend = TRUE, legend = "bottom" )
 
 #Anti-Aliasing in Plots - Can Ignore 
 
-ggsave(plot, filename = "Fig8.png", dpi = 300, type = "cairo",
+ggsave(plot, filename = "FigS2.png", dpi = 300, type = "cairo",
        width = 8.5, height = 11, units = "in")

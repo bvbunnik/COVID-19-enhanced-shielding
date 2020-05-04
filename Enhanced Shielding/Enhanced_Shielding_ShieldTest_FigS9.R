@@ -1,15 +1,15 @@
 setwd("C:/Users/amorg/Documents/PhD/nCoV Work/Figures/Enhanced Shielding/New") # This is where the plots Output
 rm(list=ls())
-library("deSolve"); library("ggplot2"); library("ggpubr"); library("reshape2"); library("dplyr"); library("Cairo")
+library("deSolve"); library("ggplot2"); library("ggpubr"); library("reshape2"); library("Cairo")
 
-#### Model Functions ####
+#### Model Functions - Generation Time + Betas + ODEs ####
 #Function for the generation time/(1/gamma) parameter
 GenTime <- function(T2, R0) {
   G = T2 * ((R0-1)/log(2))
   return(G)
 }
 
-#Function to model intervention - currently set at baseline - added additional functionality to it
+#Beta(t) Functions - Modelling the Intervention - Testing scales the betas FROM Shielders
 beta1shield <- function(time, tstart1, tdur,test) {
   gamma <- 1/(GenTime(3.3,2.8))
   beta1_2 <- 0.4*(gamma)*(1-test)
@@ -88,7 +88,7 @@ beta4 <- function(time,tstart1,tdur) {
                        1.7*(gamma))))}
 plot(beta4(seq(0,730), 71, (6*7)))
 
-#Function for Shielded/non-Shielded Pop
+#ODEs - New Shielded Betas now come into play
 SIRS <- function(time, state, parameters) {
   with(as.list(c(state, parameters)), {
     beta1shield <- beta1shield(time,tstart1,tdur,test)
@@ -262,8 +262,7 @@ pinf0 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable)) 
   geom_line(size = 1.02, stat = "identity")
 
 #### Plotting for Fig 5 #### 
-# Just 100, 50 and 0% #
-#Need to Redo Plot for the Axis Labels
+#Need to Redo This Plot for the x-Axis Labels
 pinf01 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))  + theme_bw() +
   labs(x ="Time (Days)", y = "Proportion Infected", color = "Population") + scale_y_continuous(limits = c(0,0.075), expand = c(0,0)) +
   theme(legend.position = "none", legend.title = element_blank(), legend.text=element_text(size=14),  axis.text=element_text(size=14),
@@ -288,16 +287,16 @@ plot <- ggarrange(pinfbase, pinf75, pinf50, pinf25,pinf0, nrow = 3, ncol = 2, he
 
 plotlim <- ggarrange(pinfbase, NULL, pinf50, NULL, pinf01, 
                   nrow = 5, ncol =1, align = "v", 
-                  heights = c(0.5, -0.03, 0.5,-0.05, 0.6), 
+                  heights = c(0.5, -0.03, 0.5,-0.03, 0.55), 
                   font.label = c(size = 20),labels = c("A", "", "B", "", "C"),
                   common.legend = TRUE, legend = "bottom")
 
 #Anti-Aliasing in Plots - Can Ignore 
-setwd("C:/Users/amorg/Documents/PhD/nCoV Work/Figures/Enhanced Shielding/New")
-ggsave(plot, filename = "Fig12_All.png", dpi = 300, type = "cairo",
-       width = 14, height = 10, units = "in")
+#setwd("C:/Users/amorg/Documents/PhD/nCoV Work/Figures/Enhanced Shielding/New")
+#ggsave(plot, filename = "Fig12_All.png", dpi = 300, type = "cairo",
+#       width = 14, height = 10, units = "in")
 
 
 setwd("C:/Users/amorg/Documents/PhD/nCoV Work/Figures/Enhanced Shielding/New")
-ggsave(plotlim, filename = "Fig12.png", dpi = 300, type = "cairo",
+ggsave(plotlim, filename = "FigS9.png", dpi = 300, type = "cairo",
        width = 8.5, height = 11, units = "in")
