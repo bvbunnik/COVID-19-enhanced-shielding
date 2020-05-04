@@ -268,15 +268,15 @@ void simulation(){
     double beta3_ph3 = 2.25*gamma;
     double beta4_ph3 = 0.4*gamma;
 
-    int n_comp=10;
+    int n_comp=5;
     //2-2-96 -> 1v-1v-48r
     //8-8-84 -> 4v-4h-42r
     //14-14-72 -> 7v-7h-36r
     //20-20-60 -> 10v-10h-30r or 1v-1h-3r
     //20-40-40 -> 1v-2h-2r
     //20-10-70 -> 2v-1h-7r
-    vector<double> fj = {0.2,0.1,0.7};
-    int v_comps = 2;
+    vector<double> fj = {0.2,0.2,0.6};
+    int v_comps = 1;
     int h_comps = 1;
     int r_comps = n_comp - v_comps - h_comps;
     double fv_per_comp = fj[0]/v_comps;
@@ -293,7 +293,7 @@ void simulation(){
     sd4 = simtime;
 
     double i0=0.0001;
-    filename = "c:/temp/output/SIRS_MComp_simulation_20-10-70.csv";
+    filename = "SIRS_MComp_simulation_20-20-60.csv";
     for (int i=0; i<n_comp;++i){
         for (int j=0; j<n_comp;++j){
             if (i<v_comps){
@@ -1420,7 +1420,7 @@ void vary_Re_P2(){
     integrate_n_steps(stepper,vuln, y, 0.0 , 1.0, simtime, push_back_state_time_pIv_pIh_pIr(y_vec, times,fj,v_comps, h_comps,r_comps));
     vector<vector<double>> betas;
 
-    write_simulation("c:/temp/output/SIRS_MComp_20-20-60-P2_10.csv", y_vec, betas, v_comps,h_comps, r_comps);
+    write_simulation("SIRS_MComp_20-20-60-P2_10.csv", y_vec, betas, v_comps,h_comps, r_comps);
 }
 
 
