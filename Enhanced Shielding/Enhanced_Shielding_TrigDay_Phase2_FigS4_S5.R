@@ -14,7 +14,7 @@ GenTime <- function(T2, R0) {
 #Beta Functions - Uses Two different Re - for beta1 and beta 4 + beta 2 and beta 3 
 beta1 <- function(time, tstart1, tdur, r014) {
   gamma <- 1/(GenTime(3.3,2.8))
-  beta1_2 <- (r014*(gamma))*0.5
+  beta1_2 <- 0.4*gamma
   betalin <- approxfun(x=c(tstart1+tdur, tstart1+tdur+(12*7)), y = c(r014*(gamma), beta1_2), method="linear", rule  =2)
   ifelse((time >= tstart1 & time <= tstart1+tdur), #Phase 2
          r014*(gamma),
@@ -23,12 +23,11 @@ beta1 <- function(time, tstart1, tdur, r014) {
                 ifelse((time >= tstart1+tdur+(12*7) & time <= 730),
                        beta1_2,
                        1.7*(gamma))))}
-
 plot(beta1(seq(0,730), 71, (6*7), 0.6))
 
 beta2 <- function(time, tstart1, tdur, r023) {
   gamma <- 1/(GenTime(3.3,2.8))
-  beta1_2 <- (2.8*(gamma) - ((2.8*(gamma) - r023*(gamma))*0.5))
+  beta1_2 <- 1.85*gamma
   betalin <- approxfun(x=c(tstart1+tdur, tstart1+tdur+(12*7)), y = c(r023*(gamma), beta1_2), method="linear", rule  =2)
   ifelse((time >= tstart1 & time <= tstart1+tdur), #Phase 2
          r023*(gamma),
@@ -42,7 +41,7 @@ plot(beta2(seq(0,730), 71, (6*7), 0.7))
 
 beta3 <- function(time, tstart1, tdur, r023) {
   gamma <- 1/(GenTime(3.3,2.8))
-  beta1_2 <- (2.8*(gamma) - (2.8*(gamma) - 1.7*(gamma))*0.5)
+  beta1_2 <- 2.25*gamma
   betalin <- approxfun(x=c(tstart1+tdur, tstart1+tdur+(12*7)), y = c(r023*(gamma), beta1_2), method="linear", rule  =2)
   ifelse((time >= tstart1 & time <= tstart1+tdur), #Phase 2
          r023*(gamma),
@@ -51,13 +50,11 @@ beta3 <- function(time, tstart1, tdur, r023) {
                 ifelse((time >= tstart1+tdur+(12*7) & time <= 730),
                        beta1_2,
                        1.7*(gamma))))}
-
 plot(beta3(seq(0,730), 71, (6*7), 0.7))
-
 
 beta4 <- function(time,tstart1,tdur, r014) {
   gamma <- 1/(GenTime(3.3,2.8))
-  beta1_2 <- r014*(gamma)*0.5
+  beta1_2 <- 0.4*gamma
   betalin <- approxfun(x=c(tstart1+tdur, tstart1+tdur+(12*7)), y = c(r014*(gamma), beta1_2), method="linear", rule  =2)
   ifelse((time >= tstart1 & time <= tstart1+tdur), #Phase 2
          r014*(gamma),
@@ -66,7 +63,6 @@ beta4 <- function(time,tstart1,tdur, r014) {
                 ifelse((time >= tstart1+tdur+(12*7) & time <= 730),
                        beta1_2,
                        1.7*(gamma))))}
-
 plot(beta4(seq(0,730), 71, (6*7), 0.6))
 
 #ODEs Enhanced Shielding Model - Adapted to use different phase 2 R_e
