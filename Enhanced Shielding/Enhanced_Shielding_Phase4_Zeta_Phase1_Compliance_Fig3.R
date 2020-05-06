@@ -108,12 +108,6 @@ init <- c(Sv = 0.2 - 0.0001*0.2, Ss = 0.2 - 0.0001*0.2,
 
 times <- seq(0, 478, by = 1)
 
-phase1 <- data.frame(xmin=0, xmax=71, ymin=-Inf, ymax=Inf, name = "P1")
-phase2 <- data.frame(xmin=71, xmax=71+(6*7), ymin=-Inf, ymax=Inf, name = "P2")
-phase3 <- data.frame(xmin=71+(6*7), xmax=71+(6*7)+(12*7), ymin=-Inf, ymax=Inf, name = "P3")
-phase4 <- data.frame(xmin=71+(6*7)+(12*7), xmax=Inf, ymin=-Inf, ymax=Inf, name = "P4")
-
-
 phase4scale <- seq(0.75, 1.25, by = 0.01)
 
 init <- c(Sv = 0.2 - 0.0001*0.2, Ss = 0.2 - 0.0001*0.2, 
@@ -449,13 +443,6 @@ init <- c(Sv = 0.2 - 0.0001*0.2, Ss = 0.2 - 0.0001*0.2,
           Iv = 0.0001*0.2, Is = 0.0001*0.2, Ir1 = 0.0001*0.2, Ir2 = 0.0001*0.2, Ir3 = 0.0001*0.2,   
           Rv= 0, Rs = 0, Rr1 = 0, Rr2 = 0, Rr3 = 0)
 times <- seq(0, 478, by = 1)
-
-phase1 <- data.frame(xmin=0, xmax=71, ymin=-Inf, ymax=Inf, name = "P1")
-phase2 <- data.frame(xmin=71, xmax=71+(6*7), ymin=-Inf, ymax=Inf, name = "P2")
-phase3 <- data.frame(xmin=71+(6*7), xmax=71+(6*7)+(12*7), ymin=-Inf, ymax=Inf, name = "P3")
-phase4 <- data.frame(xmin=71+(6*7)+(12*7), xmax=Inf, ymin=-Inf, ymax=Inf, name = "P4")
-
-
 
 compliance <- seq(0,1, by = 0.01)
 

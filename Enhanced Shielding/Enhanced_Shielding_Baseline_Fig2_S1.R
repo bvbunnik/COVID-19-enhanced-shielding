@@ -142,13 +142,13 @@ statsrecov <- melt(out1, id.vars = c("Time"), measure.vars = c("Recovv", "Recovs
 statsrecov$variable <- factor(statsrecov$variable, levels=rev(levels(statsrecov$variable)))
 statsinfecv$variable <- factor(statsinfecv$variable, levels=rev(levels(statsinfecv$variable)))
 
-#### R0 Plot - Imported From Bram's Results ####
+#### R_e Plot - Imported From Bram's Results ####
 
-#sub-Population Fractions -Can also be obtained from the Initial Conditions 
+#Sub-Population Fractions -Can also be obtained from the Initial Conditions 
 fv = 0.2; fs = 0.2; fr1 = 0.2; fr2 = 0.2; fr3 = 0.2 
 gamma = (1/(GenTime(3.3,2.8)))
 
-#R0 Calculations - Overall R0 Obtained From Excel Spreadsheet 
+#R_e Calculations - Overall R_e Obtained From Excel Spreadsheet 
 r0data <- data.frame("Phase" = c("Phase 1","Phase 2", "Phase 4"),
                      "OverallR0" = c(1.7, 0.86, 1.63),
                      "VulR0" = c((beta1(1,71,(6*7))*fv + beta1(1,71,(6*7))*fs + beta4(1,71,(6*7))*fr1 + beta4(1,71,(6*7))*fr2 + 
@@ -170,7 +170,7 @@ r0data <- data.frame("Phase" = c("Phase 1","Phase 2", "Phase 4"),
                                  (beta1(400,71,(6*7))*fv + beta2(400,71,(6*7))*fs + beta3(400,71,(6*7))*fr1 + beta3(400,71,(6*7))*fr2 + 
                                     beta3(400,71,(6*7))*fr3) / gamma))
 
-#Applying the R0 Calculator in a dataframe for the R0 plot
+#Applying the R_e Calculator in a dataframe for the R0 plot
 r0data1 <- rbind.data.frame(data.frame("Phase" = c("Phase 1"), "Times" = seq(0,70),                           
                                        "OverallR0" = c(1.7), "VulR0" = r0data$VulR0[1], "ShiR0" = r0data$ShiR0[1], "RemR0" = r0data$RemR0[1]),
                            data.frame("Phase" = c("Phase 2"), "Times" = seq(71,71+(6*7)-1),                   
@@ -217,7 +217,7 @@ pbeta <- ggplot(data = statsbeta1, aes(x = (Time), y = value, lty = variable)) +
   geom_text(data = phase4, aes(x = xmin, y = 0.3, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 125) +
   geom_line(size = 1.02, stat = "identity", col = "black")
 
-#R0 Plot
+#R_e Plot
 pr0 <- ggplot(data = statsr0, aes(x = (Times), y = value, col = variable)) + theme_bw() + 
   labs(x ="Time (Days)", y = expression("R"[e]), lty = " ") + scale_y_continuous(limits = c(0,3),  expand = c(0,0)) +
   theme(legend.position = "bottom", legend.title = element_blank(), legend.text=element_text(size=14),  axis.text=element_text(size=14),
@@ -233,7 +233,7 @@ pr0 <- ggplot(data = statsr0, aes(x = (Times), y = value, col = variable)) + the
   geom_text(data = phase4, aes(x = xmin, y = 2.3, label = name),inherit.aes = FALSE, size = 8, vjust = 0, hjust = 0, nudge_x = 125) +
   geom_line(size = 1.02, stat = "identity")
 
-#Recovered Plot
+#Recovered Plot - Plot S1
 recov <- ggplot(data = statsrecov, aes(x = (Time), y = value, col = variable))  + theme_bw() +
   labs(x ="Time (Days)", y = "Proportion Recovered", color = "Population") + scale_y_continuous(limits = c(0,0.7), expand = c(0,0)) +
   theme(legend.position = "bottom", legend.title = element_blank(), legend.text=element_text(size=14),  axis.text=element_text(size=14),

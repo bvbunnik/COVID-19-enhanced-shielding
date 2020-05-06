@@ -14,13 +14,13 @@ beta1 <- function(time, tstart1, tdur) {
   gamma <- 1/(GenTime(3.3,2.8))
   beta1_2 <- 0.4*(gamma)
   betalin <- approxfun(x=c(tstart1+tdur, tstart1+tdur+(12*7)), y = c(0.8*(gamma), beta1_2), method="linear", rule  =2)
-  ifelse((time >= tstart1 & time <= tstart1+tdur), #Phase 2
-         0.8*(gamma),
-         ifelse((time >= tstart1+tdur & time <= tstart1+tdur+(12*7)), #Phase 3
-                betalin(time),
+  ifelse((time >= tstart1 & time <= tstart1+tdur), 
+         0.8*(gamma), #Phase 2
+         ifelse((time >= tstart1+tdur & time <= tstart1+tdur+(12*7)), 
+                betalin(time), #Phase 3
                 ifelse((time >= tstart1+tdur+(12*7) & time <= 730),
-                       beta1_2,
-                       1.7*(gamma))))}
+                       beta1_2, #Phase 4
+                       1.7*(gamma))))} # Phase 1
 
 plot(beta1(seq(0,730), 71, (6*7), 0.5), ylim = c(0,0.5))
 
@@ -28,13 +28,13 @@ beta2 <- function(time, tstart1, tdur) {
   gamma <- 1/(GenTime(3.3,2.8))
   beta1_2 <- 1.85*gamma
   betalin <- approxfun(x=c(tstart1+tdur, tstart1+tdur+(12*7)), y = c(0.9*(gamma), beta1_2), method="linear", rule  =2)
-  ifelse((time >= tstart1 & time <= tstart1+tdur), #Phase 2
-         0.9*(gamma),
-         ifelse((time >= tstart1+tdur & time <= tstart1+tdur+(12*7)), #Phase 3
-                betalin(time),
+  ifelse((time >= tstart1 & time <= tstart1+tdur), 
+         0.9*(gamma), #Phase 2
+         ifelse((time >= tstart1+tdur & time <= tstart1+tdur+(12*7)),
+                betalin(time), #Phase 3
                 ifelse((time >= tstart1+tdur+(12*7) & time <= 730),
-                       beta1_2,
-                       1.7*(gamma))))}
+                       beta1_2, #Phase 4
+                       1.7*(gamma))))} #Phase 1
 
 plot(beta2(seq(0,730), 71, (6*7), 0.5))
 
@@ -42,13 +42,13 @@ beta3 <- function(time, tstart1, tdur) {
   gamma <- 1/(GenTime(3.3,2.8))
   beta1_2 <- 2.25*gamma
   betalin <- approxfun(x=c(tstart1+tdur, tstart1+tdur+(12*7)), y = c(0.9*(gamma), beta1_2), method="linear", rule  =2)
-  ifelse((time >= tstart1 & time <= tstart1+tdur), #Phase 2
-         0.9*(gamma),
-         ifelse((time >= tstart1+tdur & time <= tstart1+tdur+(12*7)), #Phase 3
-                betalin(time),
+  ifelse((time >= tstart1 & time <= tstart1+tdur), 
+         0.9*(gamma), #Phase 2
+         ifelse((time >= tstart1+tdur & time <= tstart1+tdur+(12*7)), 
+                betalin(time), #Phase 3
                 ifelse((time >= tstart1+tdur+(12*7) & time <= 730),
-                       beta1_2,
-                       1.7*(gamma))))}
+                       beta1_2, #Phase 4
+                       1.7*(gamma))))} #Phase 1
 
 plot(beta3(seq(0,730), 71, (6*7), 0.5))
 
@@ -57,17 +57,17 @@ beta4 <- function(time,tstart1,tdur) {
   gamma <- 1/(GenTime(3.3,2.8))
   beta1_2 <- 0.4*gamma
   betalin <- approxfun(x=c(tstart1+tdur, tstart1+tdur+(12*7)), y = c(0.8*(gamma), beta1_2), method="linear", rule  =2)
-  ifelse((time >= tstart1 & time <= tstart1+tdur), #Phase 2
-         0.8*(gamma),
-         ifelse((time >= tstart1+tdur & time <= tstart1+tdur+(12*7)), #Phase 3
-                betalin(time),
+  ifelse((time >= tstart1 & time <= tstart1+tdur), 
+         0.8*(gamma), #Phase 2
+         ifelse((time >= tstart1+tdur & time <= tstart1+tdur+(12*7)), 
+                betalin(time), #Phase 3
                 ifelse((time >= tstart1+tdur+(12*7) & time <= 730),
-                       beta1_2,
-                       1.7*(gamma))))}
+                       beta1_2, #Phase 4
+                       1.7*(gamma))))} #Phase 1
 
 plot(beta4(seq(0,730), 71, (6*7), 0.5))
 
-#Function for Shielded/non-Shielded Pop
+#Function for ODEs
 SIRS <- function(time, state, parameters) {
   with(as.list(c(state, parameters)), {
     beta1 <- beta1(time,tstart1,tdur)
@@ -109,14 +109,15 @@ times <- seq(0, 478, by = 1)
 
 #### Baseline - 6 Week Lockdown ####
 #Initial Conditions and Times
-
 parms = c(gamma = 1/(GenTime(3.3,2.8)), 
           zeta = 1/365,
           tstart1 = 71, 
           tdur = (6*7)) 
 
+#Running the Model
 out1 <- data.frame(ode(y = init, func = SIRS, times = times, parms = parms))
 
+#Manipulating the Dataframe
 out1$RemS <- out1$Sr1 + out1$Sr2 + out1$Sr3
 out1$RemI <- out1$Ir1 + out1$Ir2 + out1$Ir3
 out1$RemR <- out1$Rr1 + out1$Rr2 + out1$Rr3
@@ -129,6 +130,7 @@ colnames(out1) <- c("Time", "Suscv", "Suscs", "Suscr1", "Suscr2","Suscr3",
                     "Recovv", "Recovs", "Recovr1", "Recovr2", "Recovr2",
                     "RemSusc", "RemInf", "RemRecov")
 
+#Preparing the Data for Plotting 
 statsinfecv <- melt(out1, id.vars = c("Time"), measure.vars = c("Infected_Iv", "Infected_Is", "RemInf"))
 statsinfecv$variable <- factor(statsinfecv$variable, levels=rev(levels(statsinfecv$variable)))
 
@@ -137,6 +139,7 @@ phase2 <- data.frame(xmin=71, xmax=71+(6*7), ymin=-Inf, ymax=Inf, name = "P2")
 phase3 <- data.frame(xmin=71+(6*7), xmax=71+(6*7)+(12*7), ymin=-Inf, ymax=Inf, name = "P3")
 phase4 <- data.frame(xmin=71+(6*7)+(12*7), xmax=Inf, ymin=-Inf, ymax=Inf, name = "P4")
 
+#Plotting
 pinf6 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))  + theme_bw() +
   labs(x ="Time (Days)", y = "Proportion Infected", color = "Population") + scale_y_continuous(limits = c(0,0.07), expand = c(0,0)) +
   theme(legend.position = "none", legend.title = element_blank(), legend.text=element_text(size=14),  axis.text=element_text(size=14),
@@ -155,14 +158,15 @@ pinf6 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable)) 
 #### Baseline - 9 Week Lockdown ####
 
 #Initial Conditions and Times
-
 parms = c(gamma = 1/(GenTime(3.3,2.8)), 
           zeta = 1/365,
           tstart1 = 71, 
           tdur = (9*7)) 
 
+#Running the Model
 out1 <- data.frame(ode(y = init, func = SIRS, times = times, parms = parms))
 
+#Manipulating the Dataframe
 out1$RemS <- out1$Sr1 + out1$Sr2 + out1$Sr3
 out1$RemI <- out1$Ir1 + out1$Ir2 + out1$Ir3
 out1$RemR <- out1$Rr1 + out1$Rr2 + out1$Rr3
@@ -175,6 +179,7 @@ colnames(out1) <- c("Time", "Suscv", "Suscs", "Suscr1", "Suscr2","Suscr3",
                     "Recovv", "Recovs", "Recovr1", "Recovr2", "Recovr2",
                     "RemSusc", "RemInf", "RemRecov")
 
+#Preparing the Data for GGPlot
 statsinfecv <- melt(out1, id.vars = c("Time"), measure.vars = c("Infected_Iv", "Infected_Is", "RemInf"))
 statsinfecv$variable <- factor(statsinfecv$variable, levels=rev(levels(statsinfecv$variable)))
 
@@ -183,6 +188,7 @@ phase2 <- data.frame(xmin=71, xmax=71+(9*7), ymin=-Inf, ymax=Inf, name = "P2")
 phase3 <- data.frame(xmin=71+(9*7), xmax=71+(9*7)+(12*7), ymin=-Inf, ymax=Inf, name = "P3")
 phase4 <- data.frame(xmin=71+(9*7)+(12*7), xmax=Inf, ymin=-Inf, ymax=Inf, name = "P4")
 
+#Plotting
 pinf9 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))  + theme_bw() +
   labs(x ="Time (Days)", y = "Proportion Infected", color = "Population") + scale_y_continuous(limits = c(0,0.07), expand = c(0,0)) +
   theme(legend.position = "none", legend.title = element_blank(), legend.text=element_text(size=14),  axis.text=element_text(size=14),
@@ -206,8 +212,10 @@ parms = c(gamma = 1/(GenTime(3.3,2.8)),
           tstart1 = 71, 
           tdur = (12*7)) 
 
+#Running the Model 
 out1 <- data.frame(ode(y = init, func = SIRS, times = times, parms = parms))
 
+#Manipulating the Dataframe
 out1$RemS <- out1$Sr1 + out1$Sr2 + out1$Sr3
 out1$RemI <- out1$Ir1 + out1$Ir2 + out1$Ir3
 out1$RemR <- out1$Rr1 + out1$Rr2 + out1$Rr3
@@ -220,6 +228,7 @@ colnames(out1) <- c("Time", "Suscv", "Suscs", "Suscr1", "Suscr2","Suscr3",
                     "Recovv", "Recovs", "Recovr1", "Recovr2", "Recovr2",
                     "RemSusc", "RemInf", "RemRecov")
 
+#Preparing the Data for Plotting
 statsinfecv <- melt(out1, id.vars = c("Time"), measure.vars = c("Infected_Iv", "Infected_Is", "RemInf"))
 statsinfecv$variable <- factor(statsinfecv$variable, levels=rev(levels(statsinfecv$variable)))
 
@@ -228,6 +237,7 @@ phase2 <- data.frame(xmin=71, xmax=71+(12*7), ymin=-Inf, ymax=Inf, name = "P2")
 phase3 <- data.frame(xmin=71+(12*7), xmax=71+(12*7)+(12*7), ymin=-Inf, ymax=Inf, name = "P3")
 phase4 <- data.frame(xmin=71+(12*7)+(12*7), xmax=Inf, ymin=-Inf, ymax=Inf, name = "P4")
 
+#Plotting
 pinf12 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))  + theme_bw() +
   labs(x ="Time (Days)", y = "Proportion Infected", color = "Population") + scale_y_continuous(limits = c(0,0.07), expand = c(0,0)) +
   theme(legend.position = "bottom", legend.title = element_blank(), legend.text=element_text(size=14),  axis.text=element_text(size=14),
