@@ -1,6 +1,6 @@
 setwd("C:/Users/amorg/Documents/PhD/nCoV Work/Figures/Enhanced Shielding/New") # This is where the plots Output
 rm(list=ls())
-library("deSolve"); library("ggplot2"); library("ggpubr"); library("reshape2");  library("Cairo")
+library("deSolve"); library("ggplot2"); library("ggpubr"); library("reshape2"); library("Cairo")
 
 #### Model Functions - Gen Time/ Betas/ODEs ####
 #Function to calculate the Generation time (1/gamma) parameter

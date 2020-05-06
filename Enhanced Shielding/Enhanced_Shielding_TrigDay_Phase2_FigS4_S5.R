@@ -1,6 +1,6 @@
 setwd("C:/Users/amorg/Documents/PhD/nCoV Work/Figures/Enhanced Shielding/New") # This is where the plots Output
 rm(list=ls())
-library("deSolve"); library("ggplot2"); library("ggpubr"); library("reshape2"); library("dplyr"); library("Cairo")
+library("deSolve"); library("ggplot2"); library("ggpubr"); library("reshape2"); library("Cairo")
 
 #This Script contains otuput for both the Trigger Day and Phase 2 Analysis - Part of Figure 4
 
