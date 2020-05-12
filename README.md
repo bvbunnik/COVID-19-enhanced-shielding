@@ -11,7 +11,7 @@ Code to run analysis of the population structure `Enhanced_Shielding_PopStruct_F
 The name of `.csv` correspond to each population structure analysed and represent simulations implemented in C++ and imported into R for graphical output.
 
 ### C++
-**WIP**
+C++ code can be found in main.cpp. This file can be compiled using g++. Implementation makes use of boost libraries (odeint).
 
 ## Navigating the Repository 
 ### R
@@ -33,12 +33,9 @@ R code can be found in the `Enhanced Shielding` folder and is organised accordin
 * Figure S9 - Analysis of efficacy of Shielders % testing
 	* `Enhanced_Shielding_ShieldTest_FigS9.R`
 
-### C++
-**WIP**
 
 ## Programs and Packages Used
-COVID-19 modelling code was implemented using R (3.6.2) and C++ independently. ODEs were solved using the `desolve` (1.27.1) package in R and `odeint` in C++. Plotting in R was carried out 
-using the `ggplot` package (3.3.0). Dataframe manipulation was performed using `reshape2` (1.4.4). Finalised plot output was performed using `ggpubr` (0.2.4) and `Cairo` (1.5-10) packages. 
+COVID-19 modelling code was implemented using R (3.6.2) and C++ independently. ODEs were solved using the `desolve` (1.27.1) package in R and `odeint` in C++. Plotting in R was carried out using the `ggplot` package (3.3.0). Dataframe manipulation was performed using `reshape2` (1.4.4). Finalised plot output was performed using `ggpubr` (0.2.4) and `Cairo` (1.5-10) packages. 
 
 ## Acknowledgements 
 All analysis were performed by members and affiliates of Epigroup, University of Edinburgh: 
