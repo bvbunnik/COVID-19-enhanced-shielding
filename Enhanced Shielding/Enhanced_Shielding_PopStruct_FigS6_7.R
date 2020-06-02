@@ -1,4 +1,4 @@
-setwd("C:/Users/amorg/Documents/PhD/nCoV Work/Models") # This is where the plots output and where the .csv's are stored
+setwd("C:/Users/amorg/Documents/PhD/nCoV Work/Models/newbetas") # This is where the plots output and where the .csv's are stored
 rm(list=ls())
 library("deSolve"); library("ggplot2"); library("ggpubr"); library("reshape2"); library("Cairo")
 
@@ -12,21 +12,21 @@ phase4 <- data.frame(xmin=71+(6*7)+(12*7), xmax=Inf, ymin=-Inf, ymax=Inf, name =
 #### 2/2/96 Population Structure ####
 
 #Import in Dataframe and Remove Cumulative Inf Columns
-outimp <- read.csv("SIRS_MComp_2-2-96.csv")
-outimp <- outimp[,1:(ncol(outimp)-3)]
+outimp <- read.csv("SIRS_MComp_simulation_2-2-96-test.csv")
+outimp <- outimp[,1:(ncol(outimp)-4)]
 out <- outimp[, -grep( "cum" , colnames(outimp) )]
 
 #Create Dataframe for Plotting and Aggregate
 out1 <- data.frame("time" = out$t, 
                    "SuscV" = out[,grepl( "Sv" , names(out) )]/0.02,
-                   "SuscS" = out[,grepl( "Sh" , names(out) )]/0.02,
-                   "SuscR" = rowSums(out[,grepl( "Sr" , names(out) )])/0.96,
+                   "SuscS" = out[,grepl( "Ss" , names(out) )]/0.02,
+                   "SuscR" = rowSums(out[,grepl( "Sg" , names(out) )])/0.96,
                    "InfV" = out[,grepl( "Iv" , names(out) )]/0.02,
-                   "InfS" = out[,grepl( "Ih" , names(out) )]/0.02,
-                   "InfR" = rowSums(out[,grepl( "Ir" , names(out) )])/0.96,
-                   "RecovV" = out[,grepl( "Rv" , names(out) )]/0.02,
-                   "RecovS" = out[,grepl( "Rh" , names(out) )]/0.02,
-                   "RecovR" = rowSums(out[,grepl( "Rr" , names(out) )])/0.96)
+                   "InfS" = out[,grepl( "Is" , names(out) )]/0.02,
+                   "InfR" = rowSums(out[,grepl( "Ig" , names(out) )])/0.96,
+                   "RecovV" = out[,grepl( "Rs" , names(out) )]/0.02,
+                   "RecovS" = out[,grepl( "Rs" , names(out) )]/0.02,
+                   "RecovR" = rowSums(out[,grepl( "Rg" , names(out) )])/0.96)
 
 #Name the columns in the dataframe 
 colnames(out1) <- c("Time", "Suscv", "Suscs", "Suscr", "Infected_Iv", "Infected_Is", "Infected_Ir", "Recovv", "Recovs", "Recovr")
@@ -36,7 +36,7 @@ statsinfecv <- melt(out1[1:483,], id.vars = c("Time"), measure.vars = c("Infecte
 statsinfecv$variable <- factor(statsinfecv$variable, levels=rev(levels(statsinfecv$variable)))
 
 #Plotting
-pinf96<- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))  + theme_bw() +
+pinf96 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))  + theme_bw() +
   labs(x ="Time (Days)", y = "Proportion Infected", color = "Population") + scale_y_continuous(limits = c(0,0.125), expand = c(0,0)) +
   theme(legend.position = "none", legend.title = element_blank(), legend.text=element_text(size=14),  axis.text=element_text(size=14),
         axis.title.y=element_text(size=14),axis.title.x = element_text(size=14), 
@@ -54,10 +54,10 @@ pinf96<- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable)) 
 #Cumulative Calculations - 1 Year after End of Lockdown
 outc <- outimp[, grep( "cum" , colnames(outimp) )]
 out1c <- data.frame("time" = outimp$t, "cumV" = outc[,grepl( "Iv" , names(outc) )]/0.02,
-                   "cumE" = (outc[,grepl( "Ih" , names(outc) )] + rowSums(outc[,grepl( "Ir" , names(outc) )]))/0.98)
+                   "cumE" = (outc[,grepl( "Is" , names(outc) )] + rowSums(outc[,grepl( "Ig" , names(outc) )]))/0.98)
 
 #Calculate the Cumulative Infections  1 year after end of lockdown 
-out1c$cumV.cumIv[out1c$time == 113+(365)]-out1c$cumV.cumIv[out1c$time == 113]
+out1c$cumV[out1c$time == 113+(365)]-out1c$cumV[out1c$time == 113]
 out1c$cumE[out1c$time == 113+(365)]- out1c$cumE[out1c$time == 113]
 
 #### 10/10/30 or 20/20/60 Population Structure ####
@@ -114,20 +114,21 @@ out1c$cumE[out1c$time == 113+(365)]- out1c$cumE[out1c$time == 113]
 #### 8/8/84 Population Structure ####
 
 #Import in Dataframe and Remove Cumulative Inf Columns
-outimp <- read.csv("SIRS_MComp_8-8-84.csv")
+outimp <- read.csv("SIRS_MComp_simulation_8-8-84-test.csv")
+outimp <- outimp[,1:(ncol(outimp)-5)]
 out <- outimp[, -grep( "cum" , colnames(outimp) )]
 
 #Create Dataframe for Plotting and Aggregate
 out1 <- data.frame("time" = out$t, 
                    "SuscV" = rowSums(out[,grepl( "Sv" , names(out) )])/0.08,
-                   "SuscS" = rowSums(out[,grepl( "Sh" , names(out) )])/0.08,
-                   "SuscR" = rowSums(out[,grepl( "Sr" , names(out) )])/0.84,
+                   "SuscS" = rowSums(out[,grepl( "Ss" , names(out) )])/0.08,
+                   "SuscR" = rowSums(out[,grepl( "Sg" , names(out) )])/0.84,
                    "InfV" = rowSums(out[,grepl( "Iv" , names(out) )])/0.08,
-                   "InfS" = rowSums(out[,grepl( "Ih" , names(out) )])/0.08,
-                   "InfR" = rowSums(out[,grepl( "Ir" , names(out) )])/0.84,
+                   "InfS" = rowSums(out[,grepl( "Is" , names(out) )])/0.08,
+                   "InfR" = rowSums(out[,grepl( "Ig" , names(out) )])/0.84,
                    "RecovV" = rowSums(out[,grepl( "Rv" , names(out) )])/0.08,
-                   "RecovS" = rowSums(out[,grepl( "Rh" , names(out) )])/0.08,
-                   "RecovR" = rowSums(out[,grepl( "Rr" , names(out) )])/0.84)
+                   "RecovS" = rowSums(out[,grepl( "Rs" , names(out) )])/0.08,
+                   "RecovR" = rowSums(out[,grepl( "Rg" , names(out) )])/0.84)
 
 #Name the columns in the dataframe 
 colnames(out1) <- c("Time", "Suscv", "Suscs", "Suscr", "Infected_Iv", "Infected_Is", "Infected_Ir", "Recovv", "Recovs", "Recovr")
@@ -155,7 +156,7 @@ pinf84 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))
 #Cumulative Calculations - 1 Year after End of Lockdown
 outc <- outimp[, grep( "cum" , colnames(outimp) )]
 out1c <- data.frame("time" = outimp$t, "cumV" = rowSums(outc[,grepl( "Iv" , names(outc) )])/0.08,
-                    "cumE" = (rowSums(outc[,grepl( "Ih" , names(outc) )]) + rowSums(outc[,grepl( "Ir" , names(outc) )]))/0.92)
+                    "cumE" = (rowSums(outc[,grepl( "Is" , names(outc) )]) + rowSums(outc[,grepl( "Ig" , names(outc) )]))/0.92)
 
 #Calculate the Cumulative Infections  1 year after end of lockdown 
 out1c$cumV[out1c$time == 113+(365)]-out1c$cumV[out1c$time == 113]
@@ -164,20 +165,21 @@ out1c$cumE[out1c$time == 113+(365)]- out1c$cumE[out1c$time == 113]
 #### 14/14/72 Population Structure ####
 
 #Import in Dataframe and Remove Cumulative Inf Columns
-outimp <- read.csv("SIRS_MComp_14-14-72.csv")
+outimp <- read.csv("SIRS_MComp_simulation_14-14-72-test.csv")
+outimp <- outimp[,1:(ncol(outimp)-4)]
 out <- outimp[, -grep( "cum" , colnames(outimp) )]
 
 #Create Dataframe for Plotting and Aggregate
 out1 <- data.frame("time" = out$t, 
                    "SuscV" = rowSums(out[,grepl( "Sv" , names(out) )])/0.14,
-                   "SuscS" = rowSums(out[,grepl( "Sh" , names(out) )])/0.14,
-                   "SuscR" = rowSums(out[,grepl( "Sr" , names(out) )])/0.72,
+                   "SuscS" = rowSums(out[,grepl( "Ss" , names(out) )])/0.14,
+                   "SuscR" = rowSums(out[,grepl( "Sg" , names(out) )])/0.72,
                    "InfV" = rowSums(out[,grepl( "Iv" , names(out) )])/0.14,
-                   "InfS" = rowSums(out[,grepl( "Ih" , names(out) )])/0.14,
-                   "InfR" = rowSums(out[,grepl( "Ir" , names(out) )])/0.72,
+                   "InfS" = rowSums(out[,grepl( "Is" , names(out) )])/0.14,
+                   "InfR" = rowSums(out[,grepl( "Ig" , names(out) )])/0.72,
                    "RecovV" = rowSums(out[,grepl( "Rv" , names(out) )])/0.14,
-                   "RecovS" = rowSums(out[,grepl( "Rh" , names(out) )])/0.14,
-                   "RecovR" = rowSums(out[,grepl( "Rr" , names(out) )])/0.72)
+                   "RecovS" = rowSums(out[,grepl( "Rs" , names(out) )])/0.14,
+                   "RecovR" = rowSums(out[,grepl( "Rg" , names(out) )])/0.72)
 
 #Name the columns in the dataframe 
 colnames(out1) <- c("Time", "Suscv", "Suscs", "Suscr", "Infected_Iv", "Infected_Is", "Infected_Ir", "Recovv", "Recovs", "Recovr")
@@ -205,7 +207,7 @@ pinf72 <- ggplot(data = statsinfecv, aes(x = (Time), y = value, col = variable))
 #Cumulative Calculations - 1 Year after End of Lockdown
 outc <- outimp[, grep( "cum" , colnames(outimp) )]
 out1c <- data.frame("time" = outimp$t, "cumV" = rowSums(outc[,grepl( "Iv" , names(outc) )])/0.14,
-                    "cumE" = (rowSums(outc[,grepl( "Ih" , names(outc) )]) + rowSums(outc[,grepl( "Ir" , names(outc) )]))/0.86)
+                    "cumE" = (rowSums(outc[,grepl( "Is" , names(outc) )]) + rowSums(outc[,grepl( "Ig" , names(outc) )]))/0.86)
 
 #Calculate the Cumulative Infections  1 year after end of lockdown 
 out1c$cumV[out1c$time == 113+(365)]-out1c$cumV[out1c$time == 113]

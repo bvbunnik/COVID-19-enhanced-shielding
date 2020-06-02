@@ -101,11 +101,6 @@ SIRS <- function(time, state, parameters) {
 
 #Initial Conditions and Times
 
-init <- c(Sv = 0.2 - 0.0001*0.2, Ss = 0.2 - 0.0001*0.2, 
-          Sr1 = 0.2 - 0.0001*0.2, Sr2 = 0.2 - 0.0001*0.2, Sr3 = 0.2 - 0.0001*0.2,
-          Iv = 0.0001*0.2, Is = 0.0001*0.2, Ir1 = 0.0001*0.2, Ir2 = 0.0001*0.2, Ir3 = 0.0001*0.2,   
-          Rv= 0, Rs = 0, Rr1 = 0, Rr2 = 0, Rr3 = 0)
-
 times <- seq(0, 478, by = 1)
 
 phase4scale <- seq(0.75, 1.25, by = 0.01)
@@ -114,6 +109,7 @@ init <- c(Sv = 0.2 - 0.0001*0.2, Ss = 0.2 - 0.0001*0.2,
           Sr1 = 0.2 - 0.0001*0.2, Sr2 = 0.2 - 0.0001*0.2, Sr3 = 0.2 - 0.0001*0.2,
           Iv = 0.0001*0.2, Is = 0.0001*0.2, Ir1 = 0.0001*0.2, Ir2 = 0.0001*0.2, Ir3 = 0.0001*0.2,   
           Rv= 0, Rs = 0, Rr1 = 0, Rr2 = 0, Rr3 = 0)
+
 times <- seq(0, 478, by = 1)
 
 output <- data.frame(matrix(ncol = 10, nrow = length(phase4scale)))
